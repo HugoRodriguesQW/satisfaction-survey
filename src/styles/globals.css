@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .tail-link {
+    @apply text-sky-500 flex flex-row items-center gap-1 my-0 cursor-pointer hover:underline;
+  }
+
+  .tail-text-input {
+    @apply bg-black/[.05] dark:bg-white/[.05] p-2  px-3 rounded-full outline-0;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -17,6 +27,27 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+/* Remove arrows no Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows no Firefox */
+input[type="number"] {
+  appearance: textfield;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: inherit;
+  opacity: 0.8;
 }
 
 body {
