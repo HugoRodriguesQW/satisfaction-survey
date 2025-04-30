@@ -1,5 +1,5 @@
 import { Footer } from "@/components/footer.module";
-import { Login } from "@/components/login.module";
+import { Login } from "@/components/auth.module";
 import { MainContainer, PageContainer } from "@/components/page.module";
 import { GetServerSideProps } from "next";
 

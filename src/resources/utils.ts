@@ -7,22 +7,27 @@ export function it(...props: unknown[]) {
   const classes = {
     exists: () => {
       validation.push(props.every((p) => p != null));
-      return validation.every((v) => v);
+      return validation.every(Boolean);
     },
-    is(basicType: boolean | string | number | object) {
-      validation.push(props.every((p) => typeof p === typeof basicType));
-      return validation.every((v) => v);
+    is(...basicType: Array<boolean | string | number | object>) {
+      const types = basicType.map((t) => typeof t);
+      validation.push(props.every((p) => types.includes(typeof p)));
+      return validation.every(Boolean);
+    },
+
+    eq(...values: unknown[]) {
+      validation.push(props.every((p) => values.includes(p)));
+      return validation.every(Boolean);
     },
 
     custom(f: (prop: any) => boolean) {
       validation.push(f(props));
-      return validation.every((v) => v);
+      return validation.every(Boolean);
     },
   };
 
   return classes;
 }
-
 
 /* Function to filter safe object properties only */
 export function SafeObject<T extends Record<string, any>, F extends SafeFilter>(

@@ -10,7 +10,18 @@ import { twMerge } from "tailwind-merge";
 import { CodeInput } from "./codeInput.module";
 import { hideEmail } from "@/resources/client/utils";
 import { useRouter } from "next/router";
-import { LoginFeedback } from "./login/feedback.module";
+import { LoginError, LoginFeedback } from "./login/feedback.module";
+import { it } from "@/resources/utils";
+import {
+  emailCodeSchema,
+  loginSchema,
+  recoverySchema,
+  registerSchema,
+  repasswordSchema,
+  schemaErrors,
+  stringSchema,
+} from "@/resources/types";
+import { Input } from "./login/input.module";
 
 type LoginProps = {
   initialStep?: keyof typeof STEP;
@@ -20,7 +31,8 @@ type LoginProps = {
   };
 };
 
-export const STEP = {
+const STEP = {
+  blank: -1,
   initial: 0,
   login_validation: 1,
   register: 2,
@@ -31,12 +43,12 @@ export const STEP = {
   recovery_feedback: 7,
 };
 
-export type STEP = keyof typeof STEP;
+type STEP = keyof typeof STEP;
 
 export function Login(props: LoginProps) {
   const [email, setEmail] = useState<string>();
   const [secret, setSecret] = useState<string>();
-  const [confirmSecret, setConfirmSecret] = useState<string>();
+  const [secret2, setSecret2] = useState<string>();
   const [name, setName] = useState<string>();
   const [code, setCode] = useState<string>();
 
@@ -45,6 +57,7 @@ export function Login(props: LoginProps) {
   const [lastEmail, setLastEmail] = useState(email);
   const [transaction, setTransaction] = useState<Transaction | undefined>(props.initialTransaction);
   const [autoSendedCode, setAutoSendedCode] = useState(false);
+  const [error, setError] = useState<schemaErrors>();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const secretRef = useRef<HTMLInputElement>(null);
@@ -54,6 +67,7 @@ export function Login(props: LoginProps) {
   const router = useRouter();
 
   async function changeStep(name?: keyof typeof STEP) {
+    setError({});
     switch (name) {
       case "initial":
         setStep(STEP.initial);
@@ -78,51 +92,83 @@ export function Login(props: LoginProps) {
         break;
       case "recovery_feedback":
         setStep(STEP.recovery_feedback);
+        break;
+      case "blank":
+        setStep(STEP.blank);
     }
   }
 
   async function handleEmailSubmit() {
-    if (email?.length) {
-      session
-        .createLoginTransaction({
-          email,
-        })
-        .then((transaction) => {
-          setLastEmail(email);
-          changeStep(nextTask(transaction.tasks)?.name as STEP);
-          setTransaction(transaction);
-        })
-        .catch(() => {});
+    const submit = stringSchema.safeParse(email);
+
+    if (!submit.success) {
+      return setError({
+        form: submit.error.format()._errors,
+      });
     }
+
+    session
+      .createLoginTransaction({
+        email: submit.data,
+      })
+      .then((transaction) => {
+        setLastEmail(email);
+        changeStep(nextTask(transaction.tasks)?.name as STEP);
+        setTransaction(transaction);
+      })
+      .catch(() => {
+        setError({
+          form: ["We hit a snag while starting your login. Please try again shortly."],
+        });
+      });
   }
 
   async function handleLoginSubmit(opt?: { renew: boolean }) {
-    if (email?.length && secret?.length) {
-      const local_transaction = Promise.resolve(
-        !opt?.renew && email === lastEmail && transaction
-          ? transaction
-          : session.createLoginTransaction({
-              email,
-            })
-      );
+    const submit = loginSchema.safeParse({ email, secret });
 
-      local_transaction
-        .then((transaction) => {
-          setLastEmail(email);
-          session
-            .sendLoginValidation({ email, secret, transaction })
-            .then(() => {
-              router.reload();
-            })
-            .catch(() => {});
-        })
-        .catch(() => {});
+    if (!submit.success) {
+      return setError(submit.error.flatten().fieldErrors);
     }
+
+    const local_transaction = Promise.resolve(
+      !opt?.renew && email === lastEmail && transaction
+        ? transaction
+        : session.createLoginTransaction({
+            email: submit.data.email,
+          })
+    );
+
+    local_transaction
+      .then((transaction) => {
+        setLastEmail(email);
+        session
+          .sendLoginValidation({ ...submit.data, transaction })
+          .then(() => {
+            router.reload();
+          })
+          .catch(() => {
+            setError({
+              form: ["Make sure your email or username is correct and try again."],
+            });
+          });
+      })
+      .catch(() => {
+        setError({
+          form: ["We hit a snag while starting your login. Please try again shortly."],
+        });
+      });
   }
 
   function handleRegisterSubmit() {
-    if (email?.length && secret?.length && name?.length) {
-      session.createRegisterTransaction({ email, secret, name }).then((transaction) => {
+    const submit = registerSchema.safeParse({ email, secret, name });
+
+    if (!submit.success) {
+      return setError(submit.error.flatten().fieldErrors);
+    }
+
+    session
+      .createRegisterTransaction(submit.data)
+      .then((transaction) => {
         setLastEmail(email);
         setTransaction(transaction);
 
@@ -131,48 +177,90 @@ export function Login(props: LoginProps) {
         }
 
         changeStep(nextTask(transaction.tasks)?.name as STEP);
+      })
+      .catch(() => {
+        setError({
+          form: ["Something went wrong while creating your account. Please try again."],
+        });
       });
-    }
   }
 
   function handleEmailCodeSubmit(code: string) {
-    if (code?.length && transaction) {
-      session
-        .sendEmailConfirmation({ code, transaction })
-        .then(() => {
-          handleLoginSubmit({ renew: true }).catch(() => {
-            setStep(STEP.login_validation);
-          });
-        })
-        .catch(() => {});
+    const submit = emailCodeSchema.safeParse({ code });
+
+    if (!submit.success) {
+      return setError(submit.error.flatten().fieldErrors);
     }
+
+    if (!transaction) {
+      setError({
+        form: [
+          "There was an issue sending the code. We’re sorry about that. You can use the link in the email we sent to complete the process.",
+        ],
+      });
+
+      return changeStep("blank");
+    }
+
+    session
+      .sendEmailConfirmation({ ...submit.data, transaction })
+      .then(() => {
+        handleLoginSubmit({ renew: true }).catch(() => {
+          changeStep("login_validation");
+        });
+      })
+      .catch(() => {
+        setError({
+          form: ["It seems the code doesn’t match. Try entering it again."],
+        });
+      });
   }
 
   function handleRecoverySubmit() {
-    if (email?.length) {
-      session
-        .createRecoveryTransaction({ email })
-        .then(() => {
-          changeStep("recovery_instruction");
-        })
-        .catch(() => {});
+    const submit = recoverySchema.safeParse({ email });
+
+    if (!submit.success) {
+      return setError(submit.error.flatten().fieldErrors);
     }
+
+    session
+      .createRecoveryTransaction(submit.data)
+      .then(() => {
+        changeStep("recovery_instruction");
+      })
+      .catch(() => {
+        setError({
+          form: ["We couldn’t begin the account recovery process. Please try again."],
+        });
+      });
   }
 
   function handleNewPasswordSubmit() {
-    if (secret?.length && secret === confirmSecret && props.data?.email_token && transaction) {
-      session
-        .sendRecoveryPassword({ secret, email_token: props.data?.email_token, transaction })
-        .then(() => {
-          changeStep("recovery_feedback");
-        })
-        .catch(() => {});
+    const submit = repasswordSchema.safeParse({ secret, secret2 });
+
+    if (!submit.success) {
+      return setError(submit.error.flatten().fieldErrors);
     }
+
+    if (!props.data?.email_token || !transaction) {
+      return router.replace("/login/recovery/deep/sea");
+    }
+
+    session
+      .sendRecoveryPassword({ secret: submit.data.secret, email_token: props.data.email_token, transaction })
+      .then(() => {
+        changeStep("recovery_feedback");
+      })
+      .catch(() => {
+        setError({
+          form: ["Something went wrong while updating your password. Please try again."],
+        });
+      });
   }
 
   function handleFormSubmit(e?: InputEvent | FormEvent) {
     e?.preventDefault();
-
+    setError({});
     if (session.fetching) return;
 
     switch (step) {
@@ -218,11 +306,13 @@ export function Login(props: LoginProps) {
   return (
     <>
       <div className="text-2xl">
-        {[STEP.initial, STEP.login_validation].includes(step) && "Login"}
-        {[STEP.register, STEP.register_email_check].includes(step) && "Create Account"}
-        {[STEP.recovery, STEP.recovery_email_check, STEP.recovery_instruction, STEP.recovery_feedback].includes(step) &&
+        {it(step).eq(STEP.initial, STEP.login_validation) && "Login"}
+        {it(step).eq(STEP.register, STEP.register_email_check) && "Create Account"}
+        {it(step).eq(STEP.recovery, STEP.recovery_email_check, STEP.recovery_instruction, STEP.recovery_feedback) &&
           "Recovery Account"}
       </div>
+
+      <LoginError error={error?.form} />
 
       <LoginFeedback
         visible={[STEP.recovery_instruction].includes(step)}
@@ -256,57 +346,57 @@ export function Login(props: LoginProps) {
           }}
         >
           {[STEP.initial, STEP.register, STEP.login_validation, STEP.recovery].includes(step) && (
-            <input
+            <Input
               disabled={session.fetching}
               ref={emailRef}
+              error={error?.email}
               onChange={(e) => handleUpdate(e.target.value, setEmail)}
               autoComplete="username"
               placeholder="Email"
               type="email"
-              className={twMerge(
-                "tail-text-input flex-1",
-                ![STEP.initial, STEP.recovery].includes(step) && "col-span-2"
-              )}
+              container={{
+                className: twMerge("flex-1", ![STEP.initial, STEP.recovery].includes(step) && "col-span-2"),
+              }}
             />
           )}
 
           {[STEP.login_validation, STEP.register, STEP.recovery_email_check].includes(step) && (
-            <input
+            <Input
+              secret
               disabled={session.fetching}
               ref={secretRef}
+              error={error?.secret}
               onChange={(e) => handleUpdate(e.target.value, setSecret)}
               autoComplete={step === STEP.login_validation ? "current-password" : "new-password"}
               placeholder="Password"
               type="password"
-              className={twMerge(
-                "tail-text-input flex-1",
-                [STEP.register, STEP.recovery_email_check].includes(step) && "col-span-2"
-              )}
+              container={{
+                className: twMerge([STEP.register, STEP.recovery_email_check].includes(step) && "col-span-2"),
+              }}
             />
           )}
 
           {[STEP.recovery_email_check].includes(step) && (
-            <input
+            <Input
+              secret
+              error={error?.secret2}
               disabled={session.fetching}
-              onChange={(e) => handleUpdate(e.target.value, setConfirmSecret)}
+              onChange={(e) => handleUpdate(e.target.value, setSecret2)}
               autoComplete="new-password"
               placeholder="Confirm password"
               type="password"
-              className="tail-text-input flex-1"
             />
           )}
 
           {step === STEP.register && (
-            <>
-              <input
-                disabled={session.fetching}
-                onChange={(e) => handleUpdate(e.target.value, setName)}
-                placeholder="Name"
-                autoComplete="name"
-                type="text"
-                className="tail-text-input flex-1  transition-all duration-500 ease-in-out"
-              />
-            </>
+            <Input
+              disabled={session.fetching}
+              onChange={(e) => handleUpdate(e.target.value, setName)}
+              placeholder="Name"
+              autoComplete="name"
+              type="text"
+              error={error?.name}
+            />
           )}
 
           {[STEP.register_email_check].includes(step) && (
@@ -350,7 +440,7 @@ export function Login(props: LoginProps) {
           ) && (
             <button
               disabled={session.fetching}
-              className="bg-sky-600 rounded-full p-1 px-4 cursor-pointer"
+              className="bg-sky-600 rounded-full p-1 px-4 cursor-pointer max-h-10"
               onClick={handleFormSubmit}
             >
               {session.fetching ? (

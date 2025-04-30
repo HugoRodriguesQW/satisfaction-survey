@@ -1,5 +1,5 @@
 import { Footer } from "@/components/footer.module";
-import { Login } from "@/components/login.module";
+import { Login } from "@/components/auth.module";
 import { MainContainer, PageContainer } from "@/components/page.module";
 import { newClient } from "@/resources/server/database";
 import {  searchTransactionBy } from "@/resources/server/transactions";
