@@ -7,7 +7,7 @@ import { CgSpinnerAlt } from "react-icons/cg";
 import { HiArrowSmRight } from "react-icons/hi";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
-import { CodeInput } from "./codeInput.module";
+import { CodeInput } from "./login/codeInput.module";
 import { hideEmail } from "@/resources/client/utils";
 import { useRouter } from "next/router";
 import { LoginError, LoginFeedback } from "./login/feedback.module";
@@ -146,10 +146,16 @@ export function Login(props: LoginProps) {
           .then(() => {
             router.reload();
           })
-          .catch(() => {
-            setError({
-              form: ["Make sure your email or username is correct and try again."],
-            });
+          .catch((error: Response) => {
+            switch (error.status) {
+              case 400:
+                setError({
+                  form: ["Make sure your email or username is correct and try again."],
+                });
+                break;
+              default:
+                throw error;
+            }
           });
       })
       .catch(() => {
@@ -209,10 +215,18 @@ export function Login(props: LoginProps) {
           changeStep("login_validation");
         });
       })
-      .catch(() => {
-        setError({
-          form: ["It seems the code doesn’t match. Try entering it again."],
-        });
+      .catch((error: Response) => {
+        switch (error.status) {
+          case 400:
+            setError({
+              code: ["It seems the code doesn’t match. Try entering it again."],
+            });
+            break;
+          default:
+            setError({
+              code: ["We couldn't create your account. Try again later or sign in if you already have one."],
+            });
+        }
       });
   }
 
@@ -302,6 +316,20 @@ export function Login(props: LoginProps) {
         }
     }
   }, [step]);
+
+  useEffect(() => {
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: {
+          s: step,
+          t: transaction?.id,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+  }, [step, transaction]);
 
   return (
     <>
@@ -422,6 +450,8 @@ export function Login(props: LoginProps) {
                 onChange={setCode}
                 className="pt-4"
               />
+
+              <LoginError error={error?.code} limit={1} className="mt-3" />
 
               <button
                 disabled={session.fetching || code?.match(/\d/g)?.length !== 4}

@@ -1,7 +1,7 @@
 import { forwardRef, HTMLAttributes, InputHTMLAttributes, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { LoginError } from "./feedback.module";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 type InputProps = {
   children?: ReactNode;
@@ -37,9 +37,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {secret && (
         <div
           onClick={handleShowSwitch}
-          className="absolute top-0 right-0 h-full max-h-10 max-w-[15%] w-10 flex items-center justify-center hover:bg-foreground/30 rounded-r-full cursor-pointer"
+          className="absolute top-0 right-0 h-full max-h-10 max-w-[15%] w-13 flex items-center justify-center hover:bg-foreground/30 bg-foreground/5 rounded-full cursor-pointer"
         >
-          {showInput ? <BsEye className="mr-1" /> : <BsEyeSlash className="mr-1" />}
+          {showInput ? <PiEye  /> : <PiEyeClosed />}
         </div>
       )}
       <LoginError error={error} className="text-left mt-2" limit={1} />
