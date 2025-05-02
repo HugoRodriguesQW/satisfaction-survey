@@ -1,29 +1,13 @@
 import type { GetServerSideProps } from "next";
-import { sessionContext } from "@/context/sessionContext.module";
-import { useRouter } from "next/router";
-import { useContext } from "react";
 import { MainContainer, PageContainer } from "@/components/page.module";
 import { Footer } from "@/components/footer.module";
+import { Header } from "@/components/header.module";
 
 export default function Home() {
-  const router = useRouter();
-  const { forgotSession } = useContext(sessionContext);
-
-  function handleLogout() {
-    forgotSession()
-      .then(() => {
-        router.reload();
-      })
-      .catch(() => {});
-  }
 
   return (
     <PageContainer>
-      <header>
-        <button onClick={handleLogout} className="cursor-pointer bg-red-500 text-background px-2 rounded-sm">
-          logout
-        </button>
-      </header>
+      <Header />
 
       <MainContainer>Logged</MainContainer>
 

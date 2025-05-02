@@ -8,6 +8,12 @@
   .tail-text-input {
     @apply bg-foreground/[.05] p-2  px-3 rounded-full outline-0;
   }
+
+  .skeleton {
+    @apply bg-gradient-to-r  from-foreground/10 from-[0px] via-foreground/35 via-[40px] to-foreground/10 to-[80px];
+    background-size: 300% 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
 }
 
 :root {
@@ -26,6 +32,25 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+    filter: invert(0.3);
+  }
+
+  50% {
+    filter: invert(0)
+  }
+  40%,
+  100% {
+    background-position: -100% 0;
+  }
+
+  100% {
+    filter: invert(0.3)
   }
 }
 

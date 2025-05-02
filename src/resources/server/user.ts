@@ -1,9 +1,28 @@
-import { UserSchema, type Client } from "./database.d";
+import { AuthSchema, UserSchema, type Client } from "./database.d";
 import bcrypt from "bcrypt";
-import { ClientSession, ObjectId, WithId } from "mongodb";
-import { encrypt, Hash } from "./crypto";
+import { ClientSession, ObjectId } from "mongodb";
+import { decrypt, decryptSafe, encrypt, Hash } from "./crypto";
 import crypto from "crypto";
 import { deleteTransaction } from "./transactions";
+import { SafeObject } from "../utils";
+
+export async function readUserData(client: Client, access: AuthSchema) {
+  const user_hash = new Hash(access.payload);
+  const user = await client.user.findOne({ user_hash: user_hash.valueOf() });
+
+  if (!user) return false;
+
+  const privateData = decrypt(user.private, user_hash.withSecret());
+
+  if (!privateData) {
+    return false;
+  }
+
+  return {
+    ...user,
+    private: privateData,
+  } as UserSchema;
+}
 
 export async function createUser(
   client: Client,
@@ -55,38 +74,36 @@ export async function userExists(client: Client, email: string) {
   return !!(await client.user.countDocuments({ user_hash: new Hash(email).valueOf() }));
 }
 
-export async function validateAccessToken(client: Client, token: string) {
-  const access = await client.auth
-    .aggregate<WithId<UserSchema>>([
-      { $match: { token } },
-      {
-        $lookup: {
-          from: "user",
-          localField: "user_hash",
-          foreignField: "user_hash",
-          as: "userData",
-        },
-      },
-      { $unwind: "$userData" },
-      { $replaceRoot: { newRoot: "$userData" } },
-    ])
-    .next();
+export async function validateAccessToken(client: Client, flatToken: string) {
+  try {
+    const token: AccessToken = decryptSafe(flatToken, new Hash().withSecret());
 
-  if (!access) {
+    const access = await client.auth.findOne({ token: token.part1 });
+
+    if (!access) throw access;
+
+    access.payload = decryptSafe(access.payload, new Hash(token.part2).withSecret());
+    return access;
+  } catch {
     return false;
   }
-
-  return access;
 }
 
+export type AccessToken = {
+  part1: string;
+  part2: string;
+};
+
 export async function createAccessToken(client: Client, email: string, transactionId: ObjectId, expires: Date) {
-  const accessToken = crypto.randomBytes(32).toString("hex");
+  const part1 = crypto.randomBytes(32).toString("hex");
+  const part2 = crypto.randomBytes(32).toString("hex");
+
   await client.session(async (session) => {
     const auth = await client.auth.insertOne(
       {
-        token: accessToken,
+        token: part1,
         expires,
-        user_hash: new Hash(email).valueOf(),
+        payload: encrypt(email, new Hash(part2).withSecret()),
       },
       { session }
     );
@@ -97,10 +114,24 @@ export async function createAccessToken(client: Client, email: string, transacti
     if (!deleted) throw new Error("Couldn't delete transaction object");
   });
 
-  return accessToken;
+  return encrypt(
+    {
+      part1,
+      part2,
+    },
+    new Hash().withSecret()
+  );
 }
 
 export async function deleteAccessToken(client: Client, token: string) {
-  const deleted = await client.auth.deleteOne({ token });
-  return !!deleted.deletedCount;
+  return await client.auth.deleteOne({ token });
+}
+
+export type SafeData = {
+  private: UserSchema["private"];
+  public: UserSchema["public"];
+};
+
+export function SafeUserData(user: UserSchema): SafeData {
+  return SafeObject(user, { private: 1, public: 1 });
 }

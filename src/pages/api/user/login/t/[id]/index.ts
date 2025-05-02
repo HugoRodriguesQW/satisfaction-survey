@@ -1,6 +1,6 @@
 import { newClient } from "@/resources/server/database";
 import { isDone, SafeTransaction } from "@/resources/transactions";
-import {  searchTransactionBy } from "@/resources/server/transactions";
+import { searchTransactionBy } from "@/resources/server/transactions";
 
 import { it } from "@/resources/utils";
 import { ObjectId } from "mongodb";
@@ -36,7 +36,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!isDone(transaction.tasks)) return res.status(200).json(SafeTransaction(transaction));
 
   if (metadata) {
-    const token = await createAccessToken(client, metadata.email, transaction._id, new Date(Date.now() + 24 * 60 * 60 * 1000));
+    const token = await createAccessToken(
+      client,
+      metadata.email,
+      transaction._id,
+      new Date(Date.now() + 24 * 60 * 60 * 1000)
+    );
     setCookie(
       res,
       { token },

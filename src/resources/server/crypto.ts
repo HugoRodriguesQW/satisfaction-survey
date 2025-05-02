@@ -53,15 +53,19 @@ export function encrypt(data: object | string, hash: Hash) {
 
 export function decrypt(encrypted: string, hash: Hash) {
   try {
-    const key = Buffer.from(hash, "hex");
-
-    const cipher = crypto.createDecipheriv(algorithm, key, null);
-    let decrypted = cipher.update(encrypted, "hex", "utf8");
-    decrypted += cipher.final("utf8");
-    return JSON.parse(decrypted);
+    return decryptSafe(encrypted, hash);
   } catch {
     return false;
   }
+}
+
+export function decryptSafe(encrypted: string, hash: Hash) {
+  const key = Buffer.from(hash, "hex");
+
+  const cipher = crypto.createDecipheriv(algorithm, key, null);
+  let decrypted = cipher.update(encrypted, "hex", "utf8");
+  decrypted += cipher.final("utf8");
+  return JSON.parse(decrypted);
 }
 
 export function randomBytes(size: number) {

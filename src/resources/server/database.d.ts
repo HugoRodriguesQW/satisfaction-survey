@@ -58,7 +58,7 @@ export type SurveySchema = {
 
 export type AuthSchema = {
   token: string;
-  user_hash: string;
+  payload: string;
   expires: Date;
 };
 

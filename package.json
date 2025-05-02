@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.8",
     "bcrpyt": "^2.0.0",
     "bcrypt": "^5.1.1",
+    "boring-avatars": "^1.11.2",
     "crypto": "^1.0.1",
     "js-cookie": "^3.0.5",
     "mongodb": "^6.15.0",
