@@ -8,6 +8,8 @@ import {
   flip,
   shift,
   size,
+  useHover,
+  safePolygon,
 } from "@floating-ui/react";
 import { dataContext } from "@/context/dataContext.module";
 import { HTMLAttributes, useContext, useState } from "react";
@@ -19,6 +21,7 @@ import { PiGearFine } from "react-icons/pi";
 import { CgLogOff, CgSpinnerAlt } from "react-icons/cg";
 import { sessionContext } from "@/context/sessionContext.module";
 import { useRouter } from "next/router";
+import { HeaderLogin } from "./login.module";
 
 export function Account() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export function Account() {
   const { refs, floatingStyles, context } = useFloating({
     open,
     onOpenChange: setOpen,
+
     whileElementsMounted: autoUpdate,
     middleware: [
       flip(),
@@ -45,6 +49,12 @@ export function Account() {
 
   const click = useClick(context);
   const role = useRole(context, { role: "menu" });
+
+  const hover = useHover(context, {
+    mouseOnly: true,
+    handleClose: safePolygon(),
+  });
+
   const dismiss = useDismiss(context, {
     escapeKey: false,
 
@@ -55,23 +65,30 @@ export function Account() {
     },
   });
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
+  const { getReferenceProps, getFloatingProps } = useInteractions([click, hover, dismiss, role]);
 
   function handleLogoff() {
     forgotSession()
       .then(() => {
-        router.push("/");
+        router.reload();
       })
       .catch(() => {});
   }
+
+  if (!fetching && !data) {
+    return <HeaderLogin />;
+  }
+
   return (
     <Skeleton condition={!fetching && !!data}>
       <div className="flex items-center gap-3">
         <Separator orientation="vertical" className="h-10" />
         <div
           className={twMerge(
-            "flex items-center gap-2 hover:bg-foreground/10 p-2 rounded-md cursor-pointer",
-            open && "rounded-b-none bg-foreground/10"
+            "flex items-center gap-2 p-2 rounded-md cursor-pointer",
+            " from-foreground/10 to-foreground/20 via-foreground/10",
+            "transition-colors duration-150",
+            open && "rounded-b-none bg-gradient-to-tr"
           )}
           ref={refs.setReference}
           {...getReferenceProps()}
@@ -85,7 +102,7 @@ export function Account() {
               className="w-12"
             />
           </Skeleton.Content>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <Skeleton.Skel className="min-w-20 w-20 h-5" />
             <Skeleton.Content className="whitespace-nowrap italic font-semibold">Personal</Skeleton.Content>
 
@@ -102,6 +119,16 @@ export function Account() {
           {...getFloatingProps()}
           className="bg-foreground/10 min-h-[50px] p-3  border-none rounded-b-md"
         >
+          <div className="flex sm:hidden flex-col">
+            <Skeleton.Skel className="min-w-20 w-20 h-5" />
+            <Skeleton.Content className="whitespace-nowrap italic font-semibold">Personal</Skeleton.Content>
+
+            <Skeleton.Skel className="w-30 h-5" />
+            <Skeleton.Content className="whitespace-nowrap text-sm">{data?.private.name}</Skeleton.Content>
+          </div>
+
+          <Separator className="block: sm:hidden my-2"/>
+
           <MenuItem className="opacity-10" disabled>
             <PiGearFine className="w-5" /> Ajustes
           </MenuItem>

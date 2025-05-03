@@ -317,27 +317,13 @@ export function Login(props: LoginProps) {
     }
   }, [step]);
 
-  useEffect(() => {
-    router.replace(
-      {
-        pathname: router.pathname,
-        query: {
-          s: step,
-          t: transaction?.id,
-        },
-      },
-      undefined,
-      { shallow: true }
-    );
-  }, [step, transaction]);
-
   return (
     <>
       <div className="text-2xl">
-        {it(step).eq(STEP.initial, STEP.login_validation) && "Login"}
+        {it(step).eq(STEP.initial, STEP.login_validation) && "Sign In"}
         {it(step).eq(STEP.register, STEP.register_email_check) && "Create Account"}
         {it(step).eq(STEP.recovery, STEP.recovery_email_check, STEP.recovery_instruction, STEP.recovery_feedback) &&
-          "Recovery Account"}
+          "Account Recovery"}
       </div>
 
       <LoginError error={error?.form} />
@@ -482,7 +468,7 @@ export function Login(props: LoginProps) {
           )}
         </div>
 
-        <div className="flex gap-8 items-center justify-center pt-4">
+        <div className="flex flex-col sm:flex-row  gap-3 sm:gap-8 items-center justify-center pt-4">
           {[STEP.initial, STEP.login_validation, STEP.recovery].includes(step) && (
             <>
               <div
@@ -514,7 +500,7 @@ export function Login(props: LoginProps) {
                 changeStep("login_validation");
               }}
             >
-              Login instead?
+              Sign In instead?
             </div>
           )}
         </div>
