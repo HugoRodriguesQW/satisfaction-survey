@@ -17,7 +17,7 @@ export function LoginFeedback({ visible, children, back, backDisable = false, ba
           <div>{children}</div>
 
           {!backDisable && (
-            <button className="text-background bg-sky-500 p-2 px-6 rounded-md mt-4" onClick={back}>
+            <button className="tail-button p-2 px-6 rounded-md mt-4" onClick={back}>
               {backText}
             </button>
           )}

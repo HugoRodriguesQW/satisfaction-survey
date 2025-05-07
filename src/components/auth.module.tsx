@@ -21,7 +21,7 @@ import {
   schemaErrors,
   stringSchema,
 } from "@/resources/types";
-import { Input } from "./login/input.module";
+import { Input } from "./input.module";
 
 type LoginProps = {
   initialStep?: keyof typeof STEP;
@@ -441,7 +441,7 @@ export function Login(props: LoginProps) {
 
               <button
                 disabled={session.fetching || code?.match(/\d/g)?.length !== 4}
-                className="bg-sky-600 p-2 cursor-pointer mt-10 px-12 py-3 rounded-md "
+                className="tail-button p-2 cursor-pointer mt-10 px-12 py-3 rounded-md font-semibold"
                 onClick={() => {
                   if (code) handleEmailCodeSubmit(code);
                 }}
@@ -456,7 +456,7 @@ export function Login(props: LoginProps) {
           ) && (
             <button
               disabled={session.fetching}
-              className="bg-sky-600 rounded-full p-1 px-4 cursor-pointer max-h-10"
+              className="tail-button rounded-full p-1 px-4 cursor-pointer max-h-10"
               onClick={handleFormSubmit}
             >
               {session.fetching ? (

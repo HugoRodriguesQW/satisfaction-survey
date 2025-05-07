@@ -1,32 +1,25 @@
 import type { GetServerSideProps } from "next";
-import { MainContainer, PageContainer } from "@/components/page.module";
-import { Footer } from "@/components/footer.module";
-import { Header } from "@/components/header.module";
+import dynamic from "next/dynamic";
 
-export default function Home() {
+type HomeProps = {
+  access: boolean;
+};
 
-  return (
-    <PageContainer>
-      <Header />
+const Workspace = dynamic(() => import("@/components/workspace/workspace.module"), { ssr: true });
+const LandingPage = dynamic(() => import("@/components/landing/landing.module"), { ssr: true });
 
-      <MainContainer>Logged</MainContainer>
-
-      <Footer />
-    </PageContainer>
-  );
+export default function Home(props: HomeProps) {
+  if (props.access) {
+    return <Workspace />;
+  }
+  return <LandingPage />;
 }
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-  if (!ctx.req.cookies["token"]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
   return {
-    props: {},
+    props: {
+      access: !!ctx.req.cookies["token"],
+    } as HomeProps,
   };
 };
+

@@ -17,8 +17,8 @@ export const secretSchema = stringSchema
 
 export const nameSchema = stringSchema
   .min(3, "A username should be at least 3 characters long.")
-  .max(20, "Keep it simple — 20 characters or fewer is best.")
-  .regex(/^[a-zA-Z0-9_]+$/, "Use only letters, numbers, or underscores.");
+  .max(15, "Keep it simple — 15 characters or fewer is best.")
+  .regex(/^[a-zA-Z0-9_ ]+$/, "Use only letters, numbers, underscores or spaces.");
 
 export const codeSchema = z.string().length(4, "That code doesn’t look right. It should be 4 digits.");
 

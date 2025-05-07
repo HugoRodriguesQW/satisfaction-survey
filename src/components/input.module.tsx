@@ -1,6 +1,6 @@
 import { forwardRef, HTMLAttributes, InputHTMLAttributes, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { LoginError } from "./feedback.module";
+import { LoginError } from "./login/feedback.module";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 type InputProps = {

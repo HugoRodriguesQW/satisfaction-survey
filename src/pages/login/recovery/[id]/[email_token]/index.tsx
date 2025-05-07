@@ -39,7 +39,7 @@ export default function LoginRecovery(props: LoginRecoveryProps) {
               <li>A temporary error in processing;</li>
             </ul>
 
-            <button className="bg-sky-500 rounded-md text-background p-2 px-6" onClick={getOutHere}>
+            <button className="tail-button rounded-md text-background p-2 px-6" onClick={getOutHere}>
               Get out here
             </button>
           </div>

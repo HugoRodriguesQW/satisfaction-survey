@@ -58,3 +58,13 @@ type SafeFilter = { [p: string]: 1 | 0 };
 type Filtered<T extends Record<string, any>, F extends SafeFilter> = {
   [K in keyof F & keyof T]: T[K];
 };
+
+export function normalizeText(raw: string) {
+  return raw
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ç/g, "")
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim();
+}

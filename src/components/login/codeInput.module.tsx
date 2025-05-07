@@ -13,10 +13,6 @@ export function CodeInput({ onChange, onSubmit, length, className, ...rest }: Co
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    inputRefs?.current[0]?.focus();
-  }, []);
-
-  useEffect(() => {
     if (code) {
       onChange?.(code);
 

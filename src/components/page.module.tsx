@@ -1,12 +1,19 @@
 import { ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 type ContainerProps = {
+  noOverflow?: boolean;
   children: ReactNode;
 };
 
-export function PageContainer({ children }: ContainerProps) {
+export function PageContainer({ children, noOverflow }: ContainerProps) {
   return (
-    <div className="fixed top-0 left-0 w-full h-full overflow-auto grid grid-rows-[20px_1fr_20px] items-center justify-items-center p-8 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+    <div className={
+      twMerge(
+        "fixed top-0 left-0 w-full h-full overflow-auto grid grid-rows-[20px_1fr] items-center justify-items-center pb-0 gap-16 pt-8 font-[family-name:var(--font-geist-sans)]",
+        noOverflow && "overflow-clip"
+      )
+    }>
       {children}
     </div>
   )

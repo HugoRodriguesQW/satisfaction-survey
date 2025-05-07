@@ -30,17 +30,11 @@ export type UserMember = {
   members?: UserMember[];
 };
 
-export type PrivateUserMember = Omit<
-  UserMember,
-  "user_hash" | "password_hash" | "members"
-> & {
+export type PrivateUserMember = Omit<UserMember, "user_hash" | "password_hash" | "members"> & {
   members: PrivateUserMember[];
 };
 
-export type PublicUserMember = Omit<
-  UserMember,
-  "user" | "password" | "tags" | "name" | "members"
-> & {
+export type PublicUserMember = Omit<UserMember, "user" | "password" | "tags" | "name" | "members"> & {
   members: PublicUserMember[];
 };
 
@@ -53,7 +47,27 @@ export type DataSchema = {
 export type SurveySchema = {
   created_at: Date;
   active: boolean;
-  questions: { [qid: string]: string };
+  questions: {
+    [qid: string]: MultipleChoice | LikertScale;
+  };
+};
+
+export type MultipleChoice = {
+  question: string;
+  type: "multiple_choice";
+  options: string[];
+  required: boolean;
+};
+
+export type LikertScale = {
+  question: string;
+  type: "likert_scale";
+  range: {
+    minLabel: string;
+    maxLabel: string;
+    steps: number;
+  };
+  required: boolean;
 };
 
 export type AuthSchema = {
