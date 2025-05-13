@@ -72,7 +72,7 @@ export function Account() {
       .then(() => {
         router.reload();
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   if (!fetching && !data) {
@@ -117,9 +117,10 @@ export function Account() {
           style={floatingStyles}
           ref={refs.setFloating}
           {...getFloatingProps()}
-          className="bg-foreground/10 min-h-[50px] p-3  border-none rounded-b-md"
+          className="min-h-[50px] p-3 before-dark border-none rounded-b-md z-50"
         >
-          <div className="flex sm:hidden flex-col">
+
+          <div className="flex sm:hidden flex-col"> 
             <Skeleton.Skel className="min-w-20 w-20 h-5" />
             <Skeleton.Content className="whitespace-nowrap italic font-semibold">Personal</Skeleton.Content>
 
@@ -127,7 +128,7 @@ export function Account() {
             <Skeleton.Content className="whitespace-nowrap text-sm">{data?.private.name}</Skeleton.Content>
           </div>
 
-          <Separator className="block: sm:hidden my-2"/>
+          <Separator className="block: sm:hidden my-2" />
 
           <MenuItem className="opacity-10" disabled>
             <PiGearFine className="w-5" /> Ajustes

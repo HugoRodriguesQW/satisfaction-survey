@@ -16,11 +16,51 @@
   .tail-button-violet {
     @apply bg-gradient-to-br to-violet-700 from-neon-sub;
   }
-  
+
   .skeleton {
     @apply bg-gradient-to-r  from-foreground/10 from-[0px] via-foreground/35 via-[40px] to-foreground/10 to-[80px];
     background-size: 300% 100%;
     animation: shimmer 1.6s infinite linear;
+  }
+
+  .grid-flow-dense {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 0.5rem;
+  }
+
+  .before-dark {
+    isolation: isolate;
+    background-color: var(--background);
+  }
+
+  .before-dark.rounded-none::before {
+    border-radius: 0;
+  }
+
+  .before-dark:not(.rounded-none)::before {
+    @apply rounded-b-md;
+  }
+
+  .before-dark:not(.no-before-dark)::before {
+    content: " ";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+
+  @media (min-width: 640px) {
+    .sm\:no-before-dark::before {
+      @apply hidden;
+    }
+
+    .sm\::before {
+      @apply hidden;
+    }
   }
 }
 
@@ -76,7 +116,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -105,4 +144,26 @@ input:-webkit-autofill:active {
   100% {
     filter: invert(0.3);
   }
+}
+
+/* Para navegadores WebKit (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-foreground/10;
+  border-radius: 12px;
+  border: 1.8px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground/30;
 }

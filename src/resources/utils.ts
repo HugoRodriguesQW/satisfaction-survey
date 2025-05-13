@@ -68,3 +68,16 @@ export function normalizeText(raw: string) {
     .replace(/[^a-z0-9\s]/g, "")
     .trim();
 }
+
+export function bigNumber(value: number) {
+  const keys = [
+    [1000, "mil"],
+    [1000000, "mi"],
+    [1000000000, "bi"],
+    [1000000000000, "tri"],
+  ] as [number, string][];
+
+  const [divisor, symbol] = keys.findLast(([s]) => s < value) ?? [1, ""];
+
+  return `${Math.ceil(value / divisor)}${symbol}`;
+}
