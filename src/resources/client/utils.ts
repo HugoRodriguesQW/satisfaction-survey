@@ -1,3 +1,4 @@
+
 export function hideEmail(email?: string) {
   if (!email) return "";
   const atIndex = email.lastIndexOf("@");

@@ -5,23 +5,22 @@ import { FaRegFolderOpen } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { LuPencilRuler } from "react-icons/lu";
 import { MdOutlineInsights } from "react-icons/md";
-
 import { twMerge } from "tailwind-merge";
 
 export function Sidebar() {
   return (
     <div className={
-        twMerge(
-            "h-full flex lg:[&>*]:pl-8 [&>*]:px-4 lg:[*>*]:pr-0 border-r border-foreground/10 lg:max-w-[320px] lg:w-full",
-            "flex-row sm:flex-col fixed bottom-0 left-0 h-auto w-full sm:static sm:h-full sm:w-auto",
-            "overflow-y-auto",
-            "before-dark sm:no-before-dark rounded-none"
-        )
+      twMerge(
+        "h-full flex lg:[&>*]:pl-8 [&>*]:px-4 lg:[*>*]:pr-0 border-r border-foreground/10 lg:max-w-[320px] lg:w-full",
+        "flex-row sm:flex-col fixed bottom-0 left-0 h-auto w-full sm:static sm:h-full sm:w-auto",
+        "overflow-y-auto",
+        "before-dark sm:no-before-dark rounded-none"
+      )
     }>
       <Section icon={<FaRegFolderOpen />} name="Workspace" active path="/" />
       <Section icon={<MdOutlineInsights />} name="Overview" path="/overview" />
       <Section icon={<IoPeopleSharp />} name="Users" path="/users" />
-      <Section icon={<LuPencilRuler />} name="Builder" path="/builder" className="text-purple-700" />
+      <Section icon={<LuPencilRuler />} name="Builder" path="/builder" className="text-purple-700" newWindow />
     </div>
   );
 }
@@ -31,13 +30,19 @@ type SectionProps = {
   name?: string;
   path?: string;
   active?: boolean;
+  newWindow?: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
-function Section({ icon, className, name, active, path, ...rest }: SectionProps) {
+function Section({ icon, className, name, active, path, newWindow, ...rest }: SectionProps) {
   const router = useRouter();
 
   function handleClick() {
-    return !active && path && router.push(path);
+    if (!active && path) {
+      if (newWindow) {
+        window.open(new URL(path, window.location.href), "_blank")
+      }
+      router.push(path)
+    }
   }
 
   return (
