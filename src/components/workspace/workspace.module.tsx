@@ -10,12 +10,18 @@ import { Skeleton } from "../skeleton.module";
 import { SurveyCard } from "./card.module";
 import { DynamicBox } from "../DynamicBox";
 import { STATUS, STATUSValue } from "@/resources/definitions";
+import Head from "next/head";
 
 export default function Workspace() {
   const { data, fetching } = useContext(dataContext);
 
   return (
     <PageContainer noOverflow>
+
+      <Head>
+        <title>Privora | Build Fast and Private Surveys</title>
+      </Head>
+
       <Header fixed />
       <Skeleton condition={!fetching && !!data}>
         <div className="w-full h-full overflow-clip flex bg-background">
@@ -41,7 +47,7 @@ export default function Workspace() {
                 maxHeight: `${w.height - rect.top}px`,
               }
             }} >
-              <Section className="grid-flow-dense w-full   overflow-auto" display="grid">
+              <Section className="w-full overflow-auto" display="grid">
                 <SurveyCard data={{
                   answers: 0,
                   questions: 6,
@@ -108,10 +114,6 @@ export default function Workspace() {
                 }} />
               </Section>
 
-
-
-              <Skeleton.Skel className="w-full min-h-[369px] rounded-md" />
-
               <div className="h-20" />
             </DynamicBox>
           </div>
@@ -148,7 +150,7 @@ function Section({
       {...rest}
       className={twMerge(
         display === "flex" && "flex flex-col",
-        display === "grid" && "grid-flow-dense",
+        display === "grid" && "workspace-grid",
         "w-full py-6 px-2 sm:px-4 rounded-md   min-h-[189px] gap-4",
         (center || vcenter) && "justify-center",
         (center || hcenter) && "items-center",

@@ -29,34 +29,35 @@ export function it(...props: unknown[]) {
   return classes;
 }
 
-/* Function to filter safe object properties only */
-export function SafeObject<T extends Record<string, any>, F extends SafeFilter>(
-  source: T,
-  filter: F & { [K in keyof T]?: 1 | 0 }
-) {
+export function SafeObject<T extends Record<string, any>, F extends SafeFilterRecursive<T>>(source: T, filter: F) {
   const safe = {} as Record<string, any>;
   for (const f in filter) {
+    if (typeof filter[f] !== "number" && filter[f]) {
+      const filtered = SafeObject(source[f], filter[f]);
+      if (filtered && Object.keys(filtered).length > 0) {
+        safe[f] = filtered;
+      }
+      continue;
+    }
     if (filter[f] && source[f] !== undefined) {
       safe[f] = source[f];
     }
   }
-
   return safe as Filtered<T, F>;
 }
 
-/* Function to convert Hex to UTF-8 */
-export function HexToUtf8(hex: string) {
-  return Buffer.from(hex, "hex").toString("utf8");
-}
+type SafeFilterRecursive<T> = {
+  [K in keyof T]?: T[K] extends Array<any> ? 1 : T[K] extends Record<string, any> ? 1 | SafeFilterRecursive<T[K]> : 1;
+};
 
-/* Function to convert Hex to UTF-8 */
-export function Utf8ToHex(utf8: string) {
-  return Buffer.from(utf8, "utf8").toString("hex");
-}
-
-type SafeFilter = { [p: string]: 1 | 0 };
-type Filtered<T extends Record<string, any>, F extends SafeFilter> = {
-  [K in keyof F & keyof T]: T[K];
+type Filtered<T extends Record<string, any>, F extends SafeFilterRecursive<T>> = {
+  [K in keyof F & keyof T]: F[K] extends 1
+    ? T[K] // inclui o campo inteiro, com todos subcampos
+    : F[K] extends SafeFilterRecursive<T[K]>
+    ? T[K] extends Record<string, any>
+      ? Filtered<T[K], F[K]>
+      : never
+    : never;
 };
 
 export function normalizeText(raw: string) {
@@ -80,4 +81,12 @@ export function bigNumber(value: number) {
   const [divisor, symbol] = keys.findLast(([s]) => s < value) ?? [1, ""];
 
   return `${Math.ceil(value / divisor)}${symbol}`;
+}
+
+export function clone<T>(something: T): T {
+  return JSON.parse(JSON.stringify(something));
+}
+
+export function merge<T extends Record<string, any>, J extends Record<string, any>>(obj1: T, obj2: J) {
+  return Object.assign(obj1, obj2);
 }

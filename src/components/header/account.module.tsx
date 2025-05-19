@@ -96,7 +96,7 @@ export function Account() {
           <Skeleton.Skel className="w-12 h-12" />
           <Skeleton.Content>
             <Avatar
-              name={"Hugo Rodrigues"}
+              name={data?.private.name}
               colors={["#796c86", "#74aa9b", "#91c68d", "#ece488", "#f6f5cd"]}
               variant="beam"
               className="w-12"
@@ -107,7 +107,7 @@ export function Account() {
             <Skeleton.Content className="whitespace-nowrap italic font-semibold">Personal</Skeleton.Content>
 
             <Skeleton.Skel className="w-30 h-5" />
-            <Skeleton.Content className="whitespace-nowrap text-sm">{data?.private.name}</Skeleton.Content>
+            <Skeleton.Content className="whitespace-nowrap text-foreground text-sm">{data?.private.name}</Skeleton.Content>
           </div>
         </div>
       </div>

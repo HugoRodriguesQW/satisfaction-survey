@@ -24,7 +24,7 @@ export function Resizable({ axis, border = {
     y: "bottom"
 }, handler, onResize, className, children }: ResizableProps) {
 
-    const [width, setWidth] = useState<number>()
+    const [width, setWidth] = useState<number>(0)
     const [height, setHeight] = useState<number>()
     const [resizing, setResizing] = useState<Axis>()
 
@@ -88,7 +88,7 @@ export function Resizable({ axis, border = {
 
 
         {
-            axis.includes("x") && <div className={twMerge("absolute flex items-center top-0 w-2 h-full  border-foreground/5 cursor-col-resize",
+            axis.includes("x") && <div className={twMerge("absolute flex items-center top-0 w-2 h-full  border-foreground/5 select-none cursor-col-resize",
                 border.x === "right" ? "right-0 border-r" : "left-0 border-l"
             )}
                 onMouseDown={() => resize("x")} >
@@ -99,7 +99,7 @@ export function Resizable({ axis, border = {
         {
             axis.includes("y") && <div className={
                 twMerge(
-                    "absolute flex flex-col items-center left-0 h-2 w-full  border-foreground/5 cursor-row-resize",
+                    "absolute flex flex-col items-center left-0 h-2 w-full  border-foreground/5 select-none cursor-row-resize",
                     border.y === "bottom" ? "bottom-0 border-b" : "top-0 border-t"
                 )
             } onMouseDown={() => resize("y")}>{handler && <DefaultHandler axis="y" border={border} />}</div>

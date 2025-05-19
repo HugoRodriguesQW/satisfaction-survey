@@ -1,0 +1,36 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297 297" width="256" height="256">
+	<title>projeto</title>
+	<defs>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(304.985,338.72,-241.851,217.764,-63.283,-21.239)">
+			<stop offset="0" stop-color="#37828b"/>
+			<stop offset=".26" stop-color="#37828b"/>
+			<stop offset=".61" stop-color="#554294"/>
+			<stop offset=".78" stop-color="#633083"/>
+			<stop offset="1" stop-color="#633083"/>
+		</linearGradient>
+		<linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(304.053,337.685,-241.112,217.098,-66.715,41.579)">
+			<stop offset="0" stop-color="#37828b"/>
+			<stop offset=".26" stop-color="#37828b"/>
+			<stop offset=".61" stop-color="#554294"/>
+			<stop offset=".78" stop-color="#633083"/>
+			<stop offset="1" stop-color="#633083"/>
+		</linearGradient>
+		<linearGradient id="g3" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(354.569,393.788,-585.363,527.063,-29.432,-48.773)">
+			<stop offset="0" stop-color="#04e3fe"/>
+			<stop offset=".266" stop-color="#04e3fe"/>
+			<stop offset=".611" stop-color="#7e58fe"/>
+			<stop offset=".781" stop-color="#ab28ff"/>
+			<stop offset="1" stop-color="#ab28ff"/>
+		</linearGradient>
+	</defs>
+	<style>
+		.s0 { fill: url(#g1) } 
+		.s1 { fill: url(#g2) } 
+		.s2 { fill: url(#g3) } 
+	</style>
+	<g id="FG BG">
+		<path id="BG0" fill-rule="evenodd" class="s0" d="m14.8 36l47.9 224.2h100.9l-47-224.2z"/>
+		<path id="BG1" fill-rule="evenodd" class="s1" d="m131.2 36.3l47.9 224.2h100.9l-47-224.2z"/>
+		<path id="FG1" fill-rule="evenodd" class="s2" d="m234.3 36l-70.7 224.2h-102.2l71.2-224.2z"/>
+	</g>
+</svg>

@@ -23,9 +23,16 @@
     animation: shimmer 1.6s infinite linear;
   }
 
-  .grid-flow-dense {
+  .workspace-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 0.5rem;
+  }
+
+  .builder-sidebar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     grid-auto-rows: 1fr;
     gap: 0.5rem;
   }
@@ -52,6 +59,9 @@
     pointer-events: none;
   }
 
+  .animation-logo-2 {
+    animation: 5s logo-2 forwards ease-in-out;
+  }
 
   @media (min-width: 640px) {
     .sm\:no-before-dark::before {
@@ -61,6 +71,10 @@
     .sm\::before {
       @apply hidden;
     }
+  }
+
+  .options-grid-template {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.4fr) 1.75rem;
   }
 }
 
@@ -147,18 +161,17 @@ input:-webkit-autofill:active {
 }
 
 /* Para navegadores WebKit (Chrome, Safari, Edge, Opera) */
-::-webkit-scrollbar {
+:not(.show-scrollbar)::-webkit-scrollbar {
   width: 0px;
   height: 9px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 12px;
+  @apply bg-foreground/5;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-foreground/10;
+  @apply bg-foreground/15;
   border-radius: 12px;
   border: 1.8px solid transparent;
   background-clip: content-box;
@@ -166,4 +179,19 @@ input:-webkit-autofill:active {
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-foreground/30;
+}
+
+.show-scrollbar::-webkit-scrollbar {
+  width: 12px;
+  height: 9px;
+}
+
+@keyframes logo-2 {
+  0% {
+    transform: translateX(0%);
+  }
+  20%,
+  100% {
+    transform: translateX(13%);
+  }
 }

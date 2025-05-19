@@ -441,7 +441,7 @@ export function Login(props: LoginProps) {
 
               <button
                 disabled={session.fetching || code?.match(/\d/g)?.length !== 4}
-                className="tail-button p-2 cursor-pointer mt-10 px-12 py-3 rounded-md font-semibold"
+                className="tail-button p-2 cursor-pointer mt-10 px-12 py-3 rounded-md font-semibold text-white"
                 onClick={() => {
                   if (code) handleEmailCodeSubmit(code);
                 }}
@@ -456,7 +456,7 @@ export function Login(props: LoginProps) {
           ) && (
             <button
               disabled={session.fetching}
-              className="tail-button rounded-full p-1 px-4 cursor-pointer max-h-10"
+              className="tail-button rounded-full p-1 px-4 cursor-pointer max-h-10 text-white"
               onClick={handleFormSubmit}
             >
               {session.fetching ? (

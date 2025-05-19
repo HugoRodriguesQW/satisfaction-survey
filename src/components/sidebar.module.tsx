@@ -39,7 +39,7 @@ function Section({ icon, className, name, active, path, newWindow, ...rest }: Se
   function handleClick() {
     if (!active && path) {
       if (newWindow) {
-        window.open(new URL(path, window.location.href), "_blank")
+        return window.open(new URL(path, window.location.href), "_blank")
       }
       router.push(path)
     }

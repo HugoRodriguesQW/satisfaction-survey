@@ -1,0 +1,54 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297 164" width="297" height="164">
+	<title>projeto</title>
+	<defs>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(222.767,247.407,-176.653,159.059,-5.717,-41.809)">
+			<stop offset="0" stop-color="#37828b"/>
+			<stop offset=".26" stop-color="#37828b"/>
+			<stop offset=".61" stop-color="#554294"/>
+			<stop offset=".78" stop-color="#633083"/>
+			<stop offset="1" stop-color="#633083"/>
+		</linearGradient>
+		<linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(222.085,246.651,-176.112,158.572,-8.223,4.075)">
+			<stop offset="0" stop-color="#37828b"/>
+			<stop offset=".26" stop-color="#37828b"/>
+			<stop offset=".61" stop-color="#554294"/>
+			<stop offset=".78" stop-color="#633083"/>
+			<stop offset="1" stop-color="#633083"/>
+		</linearGradient>
+		<linearGradient id="g3" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(258.983,287.63,-427.56,384.976,19.008,-61.92)">
+			<stop offset="0" stop-color="#04e3fe"/>
+			<stop offset=".266" stop-color="#04e3fe"/>
+			<stop offset=".611" stop-color="#7e58fe"/>
+			<stop offset=".781" stop-color="#ab28ff"/>
+			<stop offset="1" stop-color="#ab28ff"/>
+		</linearGradient>
+		<linearGradient id="g4" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(258.983,287.63,-427.56,384.976,104.008,-61.92)">
+			<stop offset="0" stop-color="#04e3fe"/>
+			<stop offset=".266" stop-color="#04e3fe"/>
+			<stop offset=".611" stop-color="#7e58fe"/>
+			<stop offset=".781" stop-color="#ab28ff"/>
+			<stop offset="1" stop-color="#ab28ff"/>
+		</linearGradient>
+		<linearGradient id="g5" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(258.983,287.63,-427.56,384.976,-65.992,-61.92)">
+			<stop offset="0" stop-color="#04e3fe"/>
+			<stop offset=".266" stop-color="#04e3fe"/>
+			<stop offset=".611" stop-color="#7e58fe"/>
+			<stop offset=".781" stop-color="#ab28ff"/>
+			<stop offset="1" stop-color="#ab28ff"/>
+		</linearGradient>
+	</defs>
+	<style>
+		.s0 { fill: url(#g1) } 
+		.s1 { fill: url(#g2) } 
+		.s2 { fill: url(#g3) } 
+		.s3 { fill: url(#g4) } 
+		.s4 { fill: url(#g5) } 
+	</style>
+	<g id="FG BG">
+		<path id="BG0" fill-rule="evenodd" class="s0" d="m51.3 0l35 163.8h73.7l-34.3-163.8z"/>
+		<path id="BG1" fill-rule="evenodd" class="s1" d="m136.3 0.2l35 163.8h73.7l-34.3-163.8z"/>
+		<path id="FG1" fill-rule="evenodd" class="s2" d="m211.7 0l-51.7 163.8h-74.7l52-163.8z"/>
+		<path id="FG2" fill-rule="evenodd" class="s3" d="m296.7 0l-51.7 163.8h-74.7l52-163.8z"/>
+		<path id="FG0" fill-rule="evenodd" class="s4" d="m126.7 0l-51.7 163.8h-74.7l52-163.8z"/>
+	</g>
+</svg>
