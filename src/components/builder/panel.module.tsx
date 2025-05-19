@@ -7,8 +7,6 @@ import { twMerge } from "tailwind-merge";
 import { Input } from "../input.module";
 import { builderContext } from "@/context/builderContext.module";
 import { clone, merge } from "@/resources/utils";
-import { CgStack } from "react-icons/cg";
-import { GiClick } from "react-icons/gi";
 import { LuPointer, LuTextCursor } from "react-icons/lu";
 import { RxSlider } from "react-icons/rx";
 
