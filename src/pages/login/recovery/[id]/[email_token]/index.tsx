@@ -1,15 +1,13 @@
 import { Footer } from "@/components/footer.module";
 import { Login } from "@/components/auth.module";
 import { MainContainer, PageContainer } from "@/components/page.module";
-import { newClient } from "@/resources/server/database";
-import {  searchTransactionBy } from "@/resources/server/transactions";
-import { SafeTransaction, Transaction } from "@/resources/transactions";
+import { Transaction } from "@/resources/transactions";
 import { it } from "@/resources/utils";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 type LoginRecoveryProps = {
-  locked: boolean;
+  invalid: boolean;
   email_token?: string;
   transaction?: Transaction;
 };
@@ -25,7 +23,7 @@ export default function LoginRecovery(props: LoginRecoveryProps) {
     <PageContainer>
       <header></header>
       <MainContainer>
-        {!props.locked && (
+        {props.invalid && (
           <div className="flex flex-col gap-10 items-start">
             <div>
               <div className="text-2xl">OOOPS!</div>
@@ -45,7 +43,7 @@ export default function LoginRecovery(props: LoginRecoveryProps) {
           </div>
         )}
 
-        {props.locked && (
+        {!props.invalid && (
           <Login
             initialStep="recovery_email_check"
             initialTransaction={props.transaction}
@@ -60,25 +58,43 @@ export default function LoginRecovery(props: LoginRecoveryProps) {
   );
 }
 
+
+import { searchTransactionBy } from "@/resources/server/transactions";
+import { newClient } from "@/resources/server/database";
+import { Compound, Task } from "@/resources/server/tasks";
+
 export const getServerSideProps: GetServerSideProps<LoginRecoveryProps> = async (ctx) => {
   try {
     const { id, email_token } = ctx.query;
     if (!validateInput(id, email_token)) throw this;
     const client = await newClient();
     const transaction = await searchTransactionBy(client, id as string);
+
+    console.info({ id, transaction, email_token })
+
+
     if (!transaction) throw this;
+
+    const tasks = Compound.TaskStack(transaction.tasks.map(Task.from)).attachRaw(transaction.meta)
+
 
     return {
       props: {
-        locked: true,
-        transaction: SafeTransaction(transaction),
+        invalid: false,
+        transaction: {
+          id: id as string,
+          tasks: tasks.map(Task.safeSave)
+        },
         email_token: email_token as string,
       },
     };
-  } catch {
+
+  } catch (err) {
+
+    console.info(err)
     return {
       props: {
-        locked: false,
+        invalid: true,
       },
     };
   }

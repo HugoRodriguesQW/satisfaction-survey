@@ -1,4 +1,7 @@
 import { ClientSession, Collection, ObjectId, WithoutId } from "mongodb";
+import { Question } from "../definitions";
+
+export type TaskName = "register_email_check" | "login_validation" | "recovery_email_check"
 
 export type UserSchema = {
   user_hash: string;
@@ -47,9 +50,7 @@ export type DataSchema = {
 export type SurveySchema = {
   created_at: Date;
   active: boolean;
-  questions: {
-    [qid: string]: MultipleChoice | LikertScale;
-  };
+  questions: Question[];
 };
 
 export type MultipleChoice = {
@@ -81,9 +82,9 @@ export type TransactionSchema = {
   type: string;
   meta: string;
   tasks: {
-    name: string;
+    name: TaskName;
     done: boolean;
-    meta?: string;
+    meta: string;
   }[];
   expires: Date;
   attemps: number;

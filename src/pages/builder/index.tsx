@@ -5,27 +5,33 @@ import { createDraggable } from "@/components/draggable.module";
 import { Header } from "@/components/header.module";
 import { PageContainer } from "@/components/page.module";
 import { BuilderContextProvider } from "@/context/builderContext.module";
+import { firaCode } from "@/resources/client/fonts";
 import { QuestionTypes } from "@/resources/definitions";
+import { twMerge } from "tailwind-merge";
 
 export const DragItems = createDraggable<QuestionTypes>()
 export const DragTest = createDraggable()
+export const MovableSection = createDraggable()
 
 export default function Builder() {
     return (
         <BuilderContextProvider>
-           
             <DragItems.Context>
                 <DragTest.Context>
-                    <PageContainer noOverflow>
-                        <Header fixed showFile />
+                    <MovableSection.Context>
+                        <PageContainer noOverflow>
+                            <Header fixed showFile />
 
 
-                        <div className="w-full h-full overflow-clip flex bg-background justify-between">
-                            <BuilderSideBar />
-                            <BuilderPanel />
-                            <BuilderEditor />
-                        </div>
-                    </PageContainer>
+                            <div className={twMerge("w-full h-full overflow-clip flex bg-background justify-between",
+                                firaCode.variable
+                            )}>
+                                <BuilderSideBar />
+                                <BuilderPanel />
+                                <BuilderEditor />
+                            </div>
+                        </PageContainer>
+                    </MovableSection.Context>
                 </DragTest.Context>
             </DragItems.Context>
         </BuilderContextProvider>

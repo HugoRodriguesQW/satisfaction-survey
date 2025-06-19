@@ -94,7 +94,11 @@ export type AccessToken = {
   part2: string;
 };
 
-export async function createAccessToken(client: Client, email: string, transactionId: ObjectId, expires: Date) {
+export async function createAccessToken(client: Client, meta: string, transactionId: ObjectId, expires: Date) {
+
+  const data = JSON.parse(meta)
+
+
   const part1 = crypto.randomBytes(32).toString("hex");
   const part2 = crypto.randomBytes(32).toString("hex");
 
@@ -103,7 +107,7 @@ export async function createAccessToken(client: Client, email: string, transacti
       {
         token: part1,
         expires,
-        payload: encrypt(email, new Hash(part2).withSecret()),
+        payload: encrypt(data.email, new Hash(part2).withSecret()),
       },
       { session }
     );

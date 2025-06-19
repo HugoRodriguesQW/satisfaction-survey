@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { newClient } from "@/resources/server/database";
-import { isDone, SafeTransaction } from "@/resources/transactions";
-import { deleteTransaction, searchTransactionBy } from "@/resources/server/transactions";
+import { SafeTransaction } from "@/resources/server/transactions";
+import { deleteTransaction, searchTransactionBy, updateTransaction } from "@/resources/server/transactions";
 import { it } from "@/resources/utils";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { decrypt, Hash } from "@/resources/server/crypto";
 import { updateUserSecret } from "@/resources/server/user";
 import { Client } from "@/resources/server/database.d";
-import bcrypt from "bcrypt";
+import { Compound, Task } from "@/resources/server/tasks";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -22,34 +21,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!transaction || transaction.attemps >= 5) return res.status(400).send(null);
 
-  const email_key = decrypt(email_token, new Hash().withSecret());
-  const emailTask = transaction.tasks[0];
+  const tasks = Compound.TaskStack(transaction.tasks.map(Task.from)).attachRaw(transaction.meta)
 
-  if (!isTokenValid(email_key, emailTask.meta as string)) {
-    await incrementAttempts(client, transaction._id);
-    return res.status(400).send(null);
-  }
+  await tasks.getTask("recovery_email_check", async (emailTask) => {
+    if (!emailTask) {
+      return res.status(400).send(null);
+    }
 
-  const metadata = decrypt(transaction.meta, new Hash(email_key).withSecret());
-  emailTask.done = true;
+    const metadata = tasks.unmount(email_token);
 
-  if (!isDone(transaction.tasks)) return res.status(200).json(SafeTransaction(transaction));
+    if (!(await emailTask.test(email_token)) || !metadata) {
+      await incrementAttempts(client, transaction._id);
+      return res.status(400).send(null);
+    }
 
-  if (metadata) {
-    await handleUpdateSecret(client, metadata, secret, transaction._id);
+    if (!tasks.done()) {
+      if (metadata.layer !== 0) {
+        await updateTransaction(client, metadata.meta, tasks, transaction._id)
+      }
+      return res.status(200).json(SafeTransaction(transaction, tasks));
+    }
+
+    await handleUpdateSecret(client, metadata.meta, secret, transaction._id);
     return res.status(200).send(null);
-  }
+  })
 
-  return res.status(400).send(null);
 }
 
 function isValidInput(id: unknown, hexcode: unknown, code: unknown): boolean {
   return it(id, hexcode, code).is(String()) && ObjectId.isValid(id as string);
-}
-
-function isTokenValid(email_key: string, meta: string) {
-  if (!email_key) return false;
-  return bcrypt.compareSync(email_key as string, meta);
 }
 
 async function incrementAttempts(client: Client, id: ObjectId) {
@@ -58,12 +58,15 @@ async function incrementAttempts(client: Client, id: ObjectId) {
 
 async function handleUpdateSecret(
   client: Client,
-  metadata: Record<string, any>,
+  metadata: string,
   newSecret: string,
   transactionId: ObjectId
 ) {
+
+  const data = JSON.parse(metadata)
+
   await client.session(async (session) => {
-    const updated = await updateUserSecret(client, session, metadata.email, newSecret);
+    const updated = await updateUserSecret(client, session, data.email, newSecret);
     if (!updated) throw new Error("Couldn't update the user secret");
 
     const deleted = await deleteTransaction(client, session, transactionId);

@@ -3,10 +3,9 @@ import { twMerge } from "tailwind-merge"
 import { STATUS, STATUSValue } from "@/resources/definitions"
 import { HiOutlineDotsVertical } from "react-icons/hi"
 import { Counters } from "../counters.module"
-import { BsChatText, BsClock } from "react-icons/bs"
-import { LiaReplyAllSolid } from "react-icons/lia"
 import { Progress } from "../progress.module"
 import { bigNumber } from "@/resources/utils"
+import { FaCheckCircle, FaClock, FaCommentDots } from "react-icons/fa"
 
 type SurveyCardProps = {
     className?: HTMLAttributes<HTMLDivElement>["className"]
@@ -24,13 +23,17 @@ type SurveyCardProps = {
 
 export function SurveyCard({ className, data, onClick }: SurveyCardProps) {
     return (
-        <div className={twMerge("rounded-md w-full h-full relative pointer bg-gradient-to-bl transition-colors duration-100 from-foreground/10 hover:from-foreground/15 to-foreground/10 cursor-pointer", className)} onClick={onClick}>
+        <div className={twMerge(
+            "rounded-md w-full h-full relative pointer bg-gradient-to-bl transition-colors duration-75 from-foreground/10 hover:from-foreground/15 to-foreground/5 cursor-pointer",
+            className
+        )}
+            onClick={onClick}>
 
-            <button className="absolute top-0 right-0 p-2 bg-gradient-to-bl from-transparent to-transparent hover:from-neon/70 hover:to-neon/30 transition duration-100 rounded-full hover:rounded-md mt-2 mr-2">
+            <button className="absolute top-0 right-0 p-2 bg-gradient-to-bl from-transparent to-transparent hover:from-foreground/25 hover:to-foreground/15 transition duration-100 rounded-full hover:rounded-md mt-2 mr-2">
                 <HiOutlineDotsVertical />
             </button>
 
-            <div className="flex flex-col p-4 pb-2">
+            <div className="flex flex-col p-4 pb-4">
                 <h1 className="font-semibold overflow-hidden pb-3">{data.title}</h1>
                 <StatusText status={data.status} />
                 <p className="mt-3">{data.questions} questions ·  {data.takers} takers</p>
@@ -39,23 +42,26 @@ export function SurveyCard({ className, data, onClick }: SurveyCardProps) {
             </div>
 
 
+            <Progress value={([STATUS.active, STATUS.ended] as STATUSValue[]).includes(data.status) ?
+                (data.answers / data.takers) : 0} className="rounded-none mt-4 mb-2" />
+
 
             <div className="flex justify-between w-full items-center pr-3">
                 <Counters className="w-full" items={[
                     {
-                        icon: <LiaReplyAllSolid />,
+                        icon: <FaCheckCircle />,
                         label: "Answers",
                         value: bigNumber(data.feedbacks)
                     },
 
                     {
-                        icon: <BsChatText />,
+                        icon: <FaCommentDots />,
                         label: "Feedbacks",
                         value: bigNumber(data.feedbacks)
                     },
 
                     {
-                        icon: <BsClock />,
+                        icon: <FaClock />,
                         label: "Pending",
                         value: bigNumber(data.takers - data.answers)
                     },
@@ -65,8 +71,6 @@ export function SurveyCard({ className, data, onClick }: SurveyCardProps) {
                 <DateText date={new Date()} />
             </div>
 
-            <Progress value={([STATUS.active, STATUS.ended] as STATUSValue[]).includes(data.status) ?
-                (data.answers / data.takers) : 0} className="rounded-none mt-4" />
 
         </div>
     )
@@ -91,7 +95,7 @@ function StatusText({ status }: { status: STATUSValue }) {
                 return <span className="from-green-500/90 to-green-800/90">Active</span>
 
             case STATUS.scheduled:
-                return <span className="from-neon/90 to-neon-sub/30">Scheduled</span>
+                return <span className="from-neon/90 to-neon-violet/30">Scheduled</span>
             case STATUS.ended:
                 return <span className="from-foreground/15 to-foreground/30">Ended</span>
             default:

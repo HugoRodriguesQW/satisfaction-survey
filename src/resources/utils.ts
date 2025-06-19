@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /*  Fuction to validate the properties type */
@@ -89,4 +91,17 @@ export function clone<T>(something: T): T {
 
 export function merge<T extends Record<string, any>, J extends Record<string, any>>(obj1: T, obj2: J) {
   return Object.assign(obj1, obj2);
+}
+
+export function Utf8ToHex(utf8: string) {
+  return Buffer.from(utf8, "utf8").toString("hex");
+}
+
+export function HexToUtf8(hex: string) {
+  return Buffer.from(hex, "hex").toString("utf8");
+}
+
+
+export function uuid() {
+  return uuidv4();
 }

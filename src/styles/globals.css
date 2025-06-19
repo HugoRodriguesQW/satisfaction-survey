@@ -60,7 +60,8 @@
   }
 
   .animation-logo-2 {
-    animation: 5s logo-2 forwards ease-in-out;
+    animation: 5s logo-2 forwards;
+    animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
   }
 
   @media (min-width: 640px) {
@@ -76,14 +77,20 @@
   .options-grid-template {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.4fr) 1.75rem;
   }
+
+  .font-mono {
+    font-family: var(--font-fira-code), monospace;
+  }
 }
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --neon: #25beff;
-  --neon-mid: #44a4fc;
+  --neon: #1fc4fe;
+  --neon-mid: #409efe;
   --neon-sub: #3c9cfc;
+  --neon-violet: #5a80fe;
+  --neon-violet-sub: #8253fe;
 }
 
 @theme inline {
@@ -92,8 +99,9 @@
   --color-neon: var(--neon);
   --color-neon-mid: var(--neon-mid);
   --color-neon-sub: var(--neon-sub);
+  --color-neon-violet: var(--neon-violet);
+  --color-neon-violet-sub: var(--neon-violet-sub);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -188,9 +196,21 @@ input:-webkit-autofill:active {
 
 @keyframes logo-2 {
   0% {
-    transform: translateX(0%);
+    transform: translateX(0);
   }
-  20%,
+  10%,
+  14%,
+  20% {
+    transform: translateX(1%);
+  }
+
+  12%,
+  16%,
+  22% {
+    transform: translateX(-1%);
+  }
+
+  24%,
   100% {
     transform: translateX(13%);
   }

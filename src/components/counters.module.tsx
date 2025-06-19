@@ -20,7 +20,7 @@ export function Counters({ items, className }: CountersProps) {
             items.map((item, i) => {
                 return (
                     <div key={`counters-item-${i}`} title={item.label} onClick={item.onClick} className="flex items-center gap-[0.3rem] text-sm text-gray-400 ">
-                        <div className="text-neon">
+                        <div>
                             {item.icon}
                         </div>
                         {item.value}

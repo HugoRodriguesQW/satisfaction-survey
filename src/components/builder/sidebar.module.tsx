@@ -4,6 +4,14 @@ import { BsCursorText } from "react-icons/bs";
 import { GiClick } from "react-icons/gi";
 import { RxSlider } from "react-icons/rx";
 import { IoText } from "react-icons/io5";
+import { IconType } from "react-icons";
+import { QuestionTypes } from "@/resources/definitions";
+
+type SidebarItemProps = {
+    Icon: IconType,
+    name: string,
+    value: QuestionTypes
+}
 
 
 export function BuilderSideBar() {
@@ -28,18 +36,16 @@ export function BuilderSideBar() {
 
 
 import { DragItems } from "@/pages/builder";
-import { IconType } from "react-icons";
-import { QuestionTypes } from "@/resources/definitions";
+import { createQuestion } from "./panel.module";
+import { useContext } from "react";
+import { builderContext } from "@/context/builderContext.module";
 
-type SidebarItemProps = {
-    Icon: IconType,
-    name: string,
-    value: QuestionTypes
-}
 function SidebarItem({ Icon, name, value }: SidebarItemProps) {
+
+    const { addQuestion } = useContext(builderContext)
     return (
-        <DragItems.Item data={value} onClick={(()=> {
-            
+        <DragItems.Item data={value} onClick={(() => {
+            addQuestion(createQuestion(value), "after")
         })} className="border border-foreground/15 from-foreground/10  to-foreground/5 bg-gradient-to-br rounded-md flex flex-col items-center py-6 justify-center whitespace-nowrap hover:to-foreground/20 hover:from-foreground/20  text-foreground/90 cursor-pointer [&>*]:select-none">
             <Icon className="w-7 h-7 opacity-55" />
             {name}

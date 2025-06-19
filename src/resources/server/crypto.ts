@@ -51,7 +51,8 @@ export function encrypt(data: object | string, hash: Hash) {
   return encrypted;
 }
 
-export function decrypt(encrypted: string, hash: Hash) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function decrypt(encrypted: string, hash: Hash): any | false {
   try {
     return decryptSafe(encrypted, hash);
   } catch {

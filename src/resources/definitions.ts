@@ -17,6 +17,7 @@ export type STATUSValue = (typeof STATUS)[keyof typeof STATUS];
 export type QuestionTypes = "text-input" | "selection" | "slider" | "text-message";
 
 export const QuestionProperties = {
+  id: null as string | null,
   type: "none" as QuestionTypes,
   section: {
     title: "Thoughtful title that introduces your question" as string,
@@ -88,6 +89,7 @@ export const AutoProperties = {
 } as const;
 
 export const TextInputQuestion = SafeObject(merge(clone(QuestionProperties), { type: "text-input" } as const), {
+  id: 1,
   type: 1,
   section: 1,
   typography: {
@@ -104,6 +106,7 @@ export const TextInputQuestion = SafeObject(merge(clone(QuestionProperties), { t
 console.info({ TextInputQuestion });
 
 export const SelectionQuestion = SafeObject(merge(clone(QuestionProperties), { type: "selection" } as const), {
+  id: 1,
   type: 1,
   section: 1,
   typography: {
@@ -115,6 +118,7 @@ export const SelectionQuestion = SafeObject(merge(clone(QuestionProperties), { t
 });
 
 export const SliderQuestion = SafeObject(merge(clone(QuestionProperties), { type: "slider" } as const), {
+  id: 1,
   type: 1,
   section: 1,
   typography: {
@@ -131,6 +135,7 @@ export const SliderQuestion = SafeObject(merge(clone(QuestionProperties), { type
 });
 
 export const TextMessageQuestion = SafeObject(merge(clone(QuestionProperties), { type: "text-message" } as const), {
+  id: 1,
   type: 1,
   section: {
     description: 1,

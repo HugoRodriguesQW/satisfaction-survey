@@ -112,6 +112,7 @@ export function Login(props: LoginProps) {
         email: submit.data,
       })
       .then((transaction) => {
+        setTransaction(transaction)
         setLastEmail(email);
         changeStep(nextTask(transaction.tasks)?.name as STEP);
         setTransaction(transaction);
@@ -134,12 +135,13 @@ export function Login(props: LoginProps) {
       !opt?.renew && email === lastEmail && transaction
         ? transaction
         : session.createLoginTransaction({
-            email: submit.data.email,
-          })
+          email: submit.data.email,
+        })
     );
 
     local_transaction
       .then((transaction) => {
+        setTransaction(transaction)
         setLastEmail(email);
         session
           .sendLoginValidation({ ...submit.data, transaction })
@@ -239,7 +241,8 @@ export function Login(props: LoginProps) {
 
     session
       .createRecoveryTransaction(submit.data)
-      .then(() => {
+      .then((transaction) => {
+        setTransaction(transaction)
         changeStep("recovery_instruction");
       })
       .catch(() => {
@@ -454,18 +457,18 @@ export function Login(props: LoginProps) {
           {[STEP.initial, STEP.login_validation, STEP.register, STEP.recovery_email_check, STEP.recovery].includes(
             step
           ) && (
-            <button
-              disabled={session.fetching}
-              className="tail-button rounded-full p-1 px-4 cursor-pointer max-h-10 text-white"
-              onClick={handleFormSubmit}
-            >
-              {session.fetching ? (
-                <CgSpinnerAlt className="h-7 w-7 animate-spin" />
-              ) : (
-                <HiArrowSmRight className="h-7 w-7" />
-              )}
-            </button>
-          )}
+              <button
+                disabled={session.fetching}
+                className="tail-button rounded-full p-1 px-4 cursor-pointer max-h-10 text-white"
+                onClick={handleFormSubmit}
+              >
+                {session.fetching ? (
+                  <CgSpinnerAlt className="h-7 w-7 animate-spin" />
+                ) : (
+                  <HiArrowSmRight className="h-7 w-7" />
+                )}
+              </button>
+            )}
         </div>
 
         <div className="flex flex-col sm:flex-row  gap-3 sm:gap-8 items-center justify-center pt-4">

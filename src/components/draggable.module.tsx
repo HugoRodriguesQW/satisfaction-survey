@@ -154,10 +154,21 @@ export function createDraggable<T>() {
         )
     }
 
+    function OnDragging({ state = true, children }: { state?: boolean, children?: ReactNode }) {
+        const { dragging } = useContext(dragContext)
+
+        if (state === dragging) {
+            return <>{children}</>
+        }
+
+        return null;
+    }
+
 
     return {
         Context,
         Item,
         Drop,
+        OnDragging
     }
 }
