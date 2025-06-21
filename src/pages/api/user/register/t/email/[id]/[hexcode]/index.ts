@@ -63,7 +63,11 @@ async function handleUserCreation(client: Client, metadata: string, id: ObjectId
       session,
       data.email,
       data.secret,
-      { name: data.name, team: [] },
+      {
+        name: data.name,
+        team: [],
+        keys: {},
+      },
       { team: [] }
     );
 

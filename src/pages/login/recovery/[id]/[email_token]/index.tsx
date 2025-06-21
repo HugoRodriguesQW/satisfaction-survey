@@ -70,9 +70,7 @@ export const getServerSideProps: GetServerSideProps<LoginRecoveryProps> = async 
     const client = await newClient();
     const transaction = await searchTransactionBy(client, id as string);
 
-    console.info({ id, transaction, email_token })
-
-
+  
     if (!transaction) throw this;
 
     const tasks = Compound.TaskStack(transaction.tasks.map(Task.from)).attachRaw(transaction.meta)
@@ -89,9 +87,7 @@ export const getServerSideProps: GetServerSideProps<LoginRecoveryProps> = async 
       },
     };
 
-  } catch (err) {
-
-    console.info(err)
+  } catch  {
     return {
       props: {
         invalid: true,

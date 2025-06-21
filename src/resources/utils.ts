@@ -23,7 +23,7 @@ export function it(...props: unknown[]) {
     },
 
     custom(f: (prop: any) => boolean) {
-      validation.push(f(props));
+      validation.push(...props.map((p) => f(p)));
       return validation.every(Boolean);
     },
   };
@@ -54,12 +54,12 @@ type SafeFilterRecursive<T> = {
 
 type Filtered<T extends Record<string, any>, F extends SafeFilterRecursive<T>> = {
   [K in keyof F & keyof T]: F[K] extends 1
-    ? T[K] // inclui o campo inteiro, com todos subcampos
-    : F[K] extends SafeFilterRecursive<T[K]>
-    ? T[K] extends Record<string, any>
-      ? Filtered<T[K], F[K]>
-      : never
-    : never;
+  ? T[K] // inclui o campo inteiro, com todos subcampos
+  : F[K] extends SafeFilterRecursive<T[K]>
+  ? T[K] extends Record<string, any>
+  ? Filtered<T[K], F[K]>
+  : never
+  : never;
 };
 
 export function normalizeText(raw: string) {

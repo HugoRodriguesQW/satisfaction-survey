@@ -15,10 +15,12 @@ type ProviderProps = {
 };
 
 export function DataContextProvider({ children }: ProviderProps) {
-  const [data, setData] = useState<SafeData>();
-  const [fetching, setFetching] = useState(true);
 
   const { forgotSession } = useContext(sessionContext);
+
+
+  const [data, setData] = useState<SafeData>();
+  const [fetching, setFetching] = useState(true);
 
   async function getData() {
     setFetching(true);

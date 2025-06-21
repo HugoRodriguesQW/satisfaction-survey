@@ -24,6 +24,25 @@ export async function readUserData(client: Client, access: AuthSchema) {
   } as UserSchema;
 }
 
+
+export async function updateUserPrivate(client: Client, access: AuthSchema, privateData: UserSchema["private"], session?: ClientSession) {
+  const user_hash = new Hash(access.payload);
+
+  const encryptedPrivateData = encrypt(privateData, user_hash.withSecret())
+
+  const update = await client.user.updateOne({ user_hash: user_hash.valueOf() }, {
+    $set: {
+      private: encryptedPrivateData
+    }
+  }, { session })
+
+  if (update.acknowledged && update.modifiedCount) {
+    return update;
+  }
+
+  return false;
+}
+
 export async function createUser(
   client: Client,
   session: ClientSession,

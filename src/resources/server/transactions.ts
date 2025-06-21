@@ -1,6 +1,6 @@
 import { TransactionSchema, type Client } from "./database.d";
 import { HextToObj, ObjToHex } from "./utils";
-import type { ClientSession, ObjectId } from "mongodb";
+import type { ClientSession, ObjectId, WithId } from "mongodb";
 import { Hash } from "./crypto";
 import type { Transaction } from "../transactions";
 import { Compound, Task } from "./tasks";
@@ -158,4 +158,12 @@ export async function deleteTransaction(client: Client, session: ClientSession |
   const deleted = await client.transaction.deleteOne({ _id: transactionId }, { session: session ?? undefined });
   if (deleted.deletedCount) return deleted;
   return false;
+}
+
+
+export function SafeTransaction(transaction: WithId<TransactionSchema>, tasks: Compound<Task>): Transaction {
+  return {
+    id: transaction._id.toHexString(),
+    tasks: tasks.map(Task.safeSave),
+  };
 }

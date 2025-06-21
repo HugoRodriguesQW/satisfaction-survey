@@ -1,5 +1,5 @@
 import { ClientSession, Collection, ObjectId, WithoutId } from "mongodb";
-import { Question } from "../definitions";
+import { Question, STATUS } from "../definitions";
 
 export type TaskName = "register_email_check" | "login_validation" | "recovery_email_check"
 
@@ -9,6 +9,12 @@ export type UserSchema = {
   private: {
     name: string;
     team: PrivateUserMember[];
+    keys: {
+      [surveyId: string]: {
+        replies: string,
+        survey: string
+      };
+    }
   };
   public: {
     team: PublicUserMember[];
@@ -48,10 +54,16 @@ export type DataSchema = {
 };
 
 export type SurveySchema = {
+  data: {
+    name?: string;
+    status: STATUS;
+    questions: Question[];
+    public_key: string;
+  }
   created_at: Date;
-  active: boolean;
-  questions: Question[];
 };
+
+export type EncryptedSurveySchema = Omit<SurveySchema, "data"> & { data: string }
 
 export type MultipleChoice = {
   question: string;
@@ -92,7 +104,7 @@ export type TransactionSchema = {
 
 export type Client = {
   user: Collection<EncrypedUserSchema>;
-  survey: Collection<SurveySchema>;
+  survey: Collection<EncryptedSurveySchema>;
   data: Collection<DataSchema>;
   auth: Collection<AuthSchema>;
   transaction: Collection<TransactionSchema>;

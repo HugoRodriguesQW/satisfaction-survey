@@ -4,7 +4,7 @@ import {
   Client,
   DataSchema,
   EncrypedUserSchema,
-  SurveySchema,
+  EncryptedSurveySchema,
   TransactionSchema,
 } from "./database.d";
 
@@ -47,7 +47,7 @@ export async function newClient(): Promise<Client> {
   // Client:  structure the collections
   const client = {
     user: db.collection<EncrypedUserSchema>("user"),
-    survey: db.collection<SurveySchema>("survey"),
+    survey: db.collection<EncryptedSurveySchema>("survey"),
     data: db.collection<DataSchema>("data"),
     auth: db.collection<AuthSchema>("auth"),
     transaction: db.collection<TransactionSchema>("transaction"),

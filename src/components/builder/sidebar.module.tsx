@@ -35,7 +35,7 @@ export function BuilderSideBar() {
 }
 
 
-import { DragItems } from "@/pages/builder";
+import { DragItems } from "@/pages/builder/[id]";
 import { createQuestion } from "./panel.module";
 import { useContext } from "react";
 import { builderContext } from "@/context/builderContext.module";

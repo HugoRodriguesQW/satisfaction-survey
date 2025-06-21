@@ -1,4 +1,4 @@
-import { DragItems } from "@/pages/builder";
+import { DragItems } from "@/pages/builder/[id]";
 import { CiCirclePlus } from "react-icons/ci";
 import { DynamicBox } from "../DynamicBox";
 import { useContext } from "react";

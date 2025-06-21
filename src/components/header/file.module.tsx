@@ -1,20 +1,31 @@
 import { builderContext } from "@/context/builderContext.module"
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 
 export function HeaderFile() {
 
-    const { filename, updateFilename } = useContext(builderContext)
+    const { name, updateFilename } = useContext(builderContext)
+
+    const [temp, setTemp] = useState(name);
+
+    function handleSubmit() {
+        updateFilename(temp)
+    }
+
+    useEffect(() => {
+        setTemp(name)
+    }, [name])
 
     return (
         <div className="flex flex-nowrap items-center font-medium gap-2">
             <input
-                value={filename}
+                value={temp}
+                placeholder="Untitled Survey"
                 onChange={(e) => {
-                    const filename = e.target.value;
-                    updateFilename(filename)
+                    setTemp(e.target.value)
                 }}
-
-                className="whitespace-nowrap max-w-[120px] overflow-clip border-b border-foreground/10 outline-0"></input>
+                onSubmit={handleSubmit}
+                onBlur={handleSubmit}
+                className="whitespace-nowrap flex-0 max-w-[120px] overflow-clip border-b border-foreground/10 outline-0"></input>
             /
             <div className="bg-foreground/10 px-[0.4rem] py-[0.1rem] rounded-md">Draft</div>
         </div>
