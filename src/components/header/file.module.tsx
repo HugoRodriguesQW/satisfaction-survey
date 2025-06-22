@@ -30,7 +30,7 @@ export function HeaderFile() {
     return (
         <div className="flex flex-nowrap items-center font-medium gap-2">
             <Head>
-                <title>Privora | {name}</title>
+                <title>{name} | Privora</title>
             </Head>
             <input
                 value={temp}

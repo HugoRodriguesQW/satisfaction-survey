@@ -29,7 +29,10 @@ export function SurveyCard({ className, data, onClick }: SurveyCardProps) {
         )}
             onClick={onClick}>
 
-            <button className="absolute top-0 right-0 p-2 bg-gradient-to-bl from-transparent to-transparent hover:from-foreground/25 hover:to-foreground/15 transition duration-100 rounded-full hover:rounded-md mt-2 mr-2">
+            <button
+                className="absolute top-0 right-0 p-2 bg-gradient-to-bl from-transparent to-transparent hover:from-foreground/25 hover:to-foreground/15 transition duration-100 rounded-full hover:rounded-md mt-2 mr-2"
+                name={`${data.title}: open menu`} title="Open menu"
+            >
                 <HiOutlineDotsVertical />
             </button>
 

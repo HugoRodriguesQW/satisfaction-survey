@@ -76,7 +76,7 @@ export function SearchBar({ onChange, searchDelay = 1000, input }: SearchBarProp
         </button>
       </div>
 
-      <div className="gap-2 hidden">
+      <div className="gap-2 flex hidden">
         <Button
           onClick={() => {
             handlePrefill("completed surveys");
@@ -110,7 +110,7 @@ function Button({ children, className, ...rest }: ButtonProps) {
     <button
       {...rest}
       className={twMerge(
-        "tail-button-violet rounded-full text-sm px-2 py-[0.1rem] text-background hover:via-sky-300",
+        "opacity-75 bg-gradient-to-br from-neon  to-neon-violet rounded-full text-sm px-2 py-[0.1rem] text-black/80 hover:via-sky-300",
         className
       )}
     >

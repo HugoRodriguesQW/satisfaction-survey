@@ -64,7 +64,7 @@ function SurveyCards() {
 
 
   const conditions = {
-    displaySurveys: !fetching && !!surveys[0],
+    displaySurveys: !!surveys[0],
     displayShowMore: nextExists,
     showFirstSurveyCall: !fetching && !surveys[0],
     showLoading: fetching && !surveys[0]
@@ -85,60 +85,76 @@ function SurveyCards() {
 
   return (
     <>
-      {conditions.displaySurveys && (
-        <>
-          <Section className="w-full overflow-auto" display="grid">
-            {surveys.map((survey) =>
-              <SurveyCard key={survey.id + "-survey-card-workspace"}
-                onClick={() => handleClick(survey.id)}
-                data={{
-                  answers: 0,
-                  questions: survey.questionsCount,
-                  status: survey.status,
-                  takers: 100,
-                  feedbacks: 0,
-                  title: survey.name ?? "Untitled Survey",
-                  description: ""
-                }} />
-            )}
-          </Section>
-          <div className="h-20" />
-        </>
-      )}
+
+      <Section className="w-full overflow-auto" display="grid">
+
+        {conditions.displaySurveys && (surveys.map((survey) =>
+          <SurveyCard key={survey.id + "-survey-card-workspace"}
+            onClick={() => handleClick(survey.id)}
+            data={{
+              answers: 0,
+              questions: survey.questionsCount,
+              status: survey.status,
+              takers: 100,
+              feedbacks: 0,
+              title: survey.name ?? "Untitled Survey",
+              description: ""
+            }} />
+        ))}
+
+        {(conditions.showFirstSurveyCall || conditions.showLoading) && (
+          new Array(8).fill(0).map((_, i) => (
+            <Skeleton condition={!conditions.showLoading} key={"fake-workspace-skel-" + i} >
+              <Skeleton.Skel className="w-full h-full rounded-md bg-foreground/5 min-h-[200px]" />
+              <Skeleton.Content className="w-full h-full rounded-md bg-foreground/10 min-h-[200px]"  />
+            </Skeleton>
+          ))
+        )}
+
+        {fetching && (
+          <>
+            <Skeleton condition={false}>
+              <Skeleton.Skel className="w-full h-full rounded-md" />
+            </Skeleton>
+            <Skeleton condition={false}>
+              <Skeleton.Skel className="w-full h-full rounded-md" />
+            </Skeleton>
+          </>
+        )
+        }
+      </Section>
 
 
-      {(conditions.showFirstSurveyCall || conditions.showLoading) && (
-        <div className="min-h-[300px] h-full py-5 flex items-center justify-center flex-col gap-5 relative">
-
-          <div className="absolute min-h-[200px] max-h-[70%] overflow-clip blur-md flex flex-wrap w-full h-full gap-10 justify-center mt-10 opacity-45" >
-            {new Array(8).fill(0).map((_, i) => (
-              <Skeleton condition={!conditions.showLoading} key={"fake-workspace-skel-" + i} >
-                <Skeleton.Skel className="min-h-[180px] min-w-[350px] rounded-md bg-foreground/5 flex p-5 flex-col gap-5" />
-                <Skeleton.Content className="min-h-[180px] min-w-[350px] rounded-md bg-foreground/10 flex p-5 flex-col gap-5" />
-              </Skeleton>
-            ))}
-          </div>
-
-          {
-            conditions.showFirstSurveyCall && (
-              <>
-                <div className="flex flex-col gap-2 items-center z-1">
-                  <div className="text-3xl font-bold text-center">Let’s start by creating your first <span className="font-bold text-neon-violet-sub">private</span> survey.</div>
-                  <div className="text-lg max-w-[80%] text-center  text-foreground/90">No surveys yet. Create your first survey to start collecting valuable insights</div>
-                </div>
-                <button
-                  className="tail-button px-8 py-2 z-1 rounded-md font-bold text-white cursor-pointer hover:to-neon-violet  transition duration-200"
-                  onClick={handleGetStarted}
-                >Get Started</button>
-              </>
-            )
-          }
+      {conditions.displayShowMore && (
+        <div className="w-full flex py-3 justify-center">
+          <button className="border border-foreground/25 px-4 py-1 rounded-md hover:bg-foreground/5" onClick={handleShowMore} disabled={fetching}>
+            {fetching ? "searching..." : "show more"}
+          </button>
         </div>
       )}
 
-      {conditions.displayShowMore && (
-        <button onClick={handleShowMore} disabled={fetching}>show more</button>
-      )}
+      {conditions.displaySurveys && <div className="h-20" />}
+
+      {
+        (conditions.showFirstSurveyCall || conditions.showLoading) && (
+          <div className="min-h-[300px] h-full py-5 flex items-center justify-center flex-col gap-5 relative">
+            {
+              conditions.showFirstSurveyCall && (
+                <>
+                  <div className="flex flex-col gap-2 items-center z-1">
+                    <div className="text-3xl font-bold text-center">Let’s start by creating your first <span className="font-bold text-neon-violet-sub">private</span> survey.</div>
+                    <div className="text-lg max-w-[80%] text-center  text-foreground/90">No surveys yet. Create your first survey to start collecting valuable insights</div>
+                  </div>
+                  <button
+                    className="tail-button px-8 py-2 z-1 rounded-md font-bold text-white cursor-pointer hover:to-neon-violet  transition duration-200"
+                    onClick={handleGetStarted}
+                  >Get Started</button>
+                </>
+              )
+            }
+          </div>
+        )
+      }
     </>
   )
 }
