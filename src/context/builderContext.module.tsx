@@ -4,6 +4,7 @@ import { dataContext } from "@/context/dataContext.module";
 import type { Survey } from "@/resources/server/surveys";
 import { apiPost } from "@/resources/client/fetch";
 import { createUpdateStack } from "@/resources/client/updateStack";
+import { Sync } from "@/resources/definitions/sync";
 
 type BuilderData = {
     id?: string,
@@ -13,6 +14,9 @@ type BuilderData = {
 
 type BuilderContextProps = BuilderData & {
     current: number,
+    syncStatus: Sync;
+    surveyFetched: boolean;
+    forceSync: () => void;
     updateCurrent: (index?: number) => void;
     addQuestion: <Q extends Question>(question: Q, position?: "after" | "before" | number) => void
     removeQuestion: (index: number) => void
@@ -31,7 +35,8 @@ type BuilderProviderProps = {
 
 export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
 
-    const [surveyFetched, setSurvetFetched] = useState(false);
+    const [surveyFetched, setSurvetFetched] = useState<boolean>(false);
+    const [syncStatus, setSyncStatus] = useState<BuilderContextProps["syncStatus"]>(Sync.Syncing);
 
     const [name, setFilename] = useState<BuilderContextProps["name"]>("Untitled Survey")
     const [questions, setQuestions] = useState<BuilderContextProps["questions"]>([])
@@ -83,6 +88,10 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
         }
     }
 
+    const forceSync: BuilderContextProps["forceSync"] = () => {
+        updateStack.retry()
+    }
+
     async function handleUpdateStack(update: unknown, stackId: string) {
         console.info("Updating the Stack with:", { update, stackId })
         const result = await apiPost<Survey>(`/api/survey/${id}/update`, { property: stackId, value: update }, "json")
@@ -91,6 +100,15 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
 
     function handleUpdateError(update: unknown, stackId: string) {
         console.warn({ updateError: { update, stackId } })
+        setSyncStatus(Sync.Fail)
+    }
+
+    function handleUpdateSuccess() {
+        setSyncStatus(Sync.Ok)
+    }
+
+    function handleUpdateCall() {
+        setSyncStatus(Sync.Syncing)
     }
 
     useEffect(() => {
@@ -110,12 +128,17 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
     useEffect(() => {
         updateStack.on("name", handleUpdateStack)
         updateStack.on("questions", handleUpdateStack)
+        updateStack.on("call", handleUpdateCall)
         updateStack.on("fail", handleUpdateError)
+        updateStack.on("success", handleUpdateSuccess)
 
         return () => {
             updateStack.off("name", handleUpdateStack)
             updateStack.off("questions", handleUpdateStack)
+            updateStack.off("call", handleUpdateCall)
             updateStack.off("fail", handleUpdateError)
+            updateStack.off("success", handleUpdateSuccess)
+
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,17 +153,19 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
 
     return (
         <builderContext.Provider value={{
+            surveyFetched,
             id,
             name,
             questions,
             current,
+            syncStatus,
+            forceSync,
             updateCurrent,
             addQuestion,
             removeQuestion,
             updateQuestion,
             updateFilename
         }}>
-
             {children}
         </builderContext.Provider>
     )

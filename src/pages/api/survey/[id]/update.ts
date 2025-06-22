@@ -1,4 +1,4 @@
-import { Question, STATUS } from "@/resources/definitions";
+import { Question, STATUS, STATUSValue } from "@/resources/definitions";
 import { authMiddleware } from "@/resources/server/auth";
 import { readSurveyData, SafeSurvey, searchSurveyById, UpdatableKeys, updatebleKeys, updateSurveyData } from "@/resources/server/surveys";
 import { readUserData } from "@/resources/server/user";
@@ -38,7 +38,7 @@ const handler = authMiddleware(async (req, res) => {
                     data.questions = value as Question[];
                     break;
                 case "status":
-                    data.status = value as STATUS;
+                    data.status = value as STATUSValue;
                     break;
                 default:
                     console.error("Invalid Property:", property)
@@ -69,7 +69,7 @@ function validateInput(id: unknown, property: unknown, value: unknown) {
         case "questions":
             return it(value).is(Object());
         case "status":
-            return it(value).is(String());
+            return it(value).eq(STATUS.active, STATUS.disabled, STATUS.ended, STATUS.scheduled)
         default:
             return false;
 

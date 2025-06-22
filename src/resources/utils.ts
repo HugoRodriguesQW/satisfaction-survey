@@ -22,6 +22,26 @@ export function it(...props: unknown[]) {
       return validation.every(Boolean);
     },
 
+    lessThan(than: string | number) {
+      validation.push(props.every((p) => ["number", "string"].includes(typeof p) ? (p as string | number) < than : false));
+      return validation.every(Boolean);
+    },
+
+    moreThan(than: string | number) {
+      validation.push(props.every((p) => ["number", "string"].includes(typeof p) ? (p as string | number) > than : false));
+      return validation.every(Boolean);
+    },
+
+    lessEqThan(than: string | number) {
+      validation.push(props.every((p) => ["number", "string"].includes(typeof p) ? (p as string | number) <= than : false));
+      return validation.every(Boolean);
+    },
+
+    moreEqThan(than: string | number) {
+      validation.push(props.every((p) => ["number", "string"].includes(typeof p) ? (p as string | number) >= than : false));
+      return validation.every(Boolean);
+    },
+
     custom(f: (prop: any) => boolean) {
       validation.push(...props.map((p) => f(p)));
       return validation.every(Boolean);

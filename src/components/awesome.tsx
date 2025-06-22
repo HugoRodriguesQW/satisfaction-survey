@@ -6,7 +6,7 @@ export function AwesomeBox(props: { className?: HTMLAttributes<HTMLDivElement>["
         const loadParticles = async () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const particlesJS = (window as any).particlesJS;
-            particlesJS.load('awesome-box', '/particles/prefab/awesome-box.json', () => {
+            particlesJS.load('awesome-box',  '/particles/prefab/awesome-box.json', () => {
                 console.log('Particles loaded');
             });
 

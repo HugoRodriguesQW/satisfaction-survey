@@ -1,5 +1,5 @@
 import { WithId } from "mongodb";
-import { Question, STATUS } from "../definitions";
+import { Question, STATUS, STATUSValue } from "../definitions";
 import { SafeObject } from "../utils";
 import { decrypt, encrypt, Hash, randomBytes } from "./crypto";
 import { generatePair } from "./crypto.asymetric";
@@ -10,10 +10,11 @@ import { HextToObj, ObjToHex } from "./utils";
 export type Survey = {
     name?: string,
     created_at: Date;
-    status: STATUS;
+    status: STATUSValue;
     questions: Question[];
 }
 
+export type MinimalSurvey = Omit<Survey, "questions"> & { questionsCount: number, id: string }
 export type SurveyProperties = keyof Survey
 export const updatebleKeys = (["name", "questions", "status"] as SurveyProperties[]);
 export type UpdatableKeys = typeof updatebleKeys[number];
@@ -24,6 +25,18 @@ export async function searchSurveyById(client: Client, id: string) {
     if (!survey) return false;
     return survey;
 }
+
+
+export async function readMultipleSurveys(client: Client, ids: string[]) {
+    const surveys = await client.survey.find({
+        _id: {
+            $in: ids.map(HextToObj)
+        }
+    }).toArray();
+
+    return surveys;
+}
+
 
 export function readSurveyData(survey: WithId<EncryptedSurveySchema>, userOrKey: UserSchema | UserSchema["private"]["keys"][number]["survey"]) {
     const surveyKey = typeof userOrKey === "string" ? userOrKey : userOrKey.private.keys[ObjToHex(survey._id)]?.survey;
@@ -77,7 +90,7 @@ export function createNewSurvey(client: Client, user: UserSchema, access: AuthSc
                 data: {
                     public_key: pair.public,
                     questions: [],
-                    status: "disabled",
+                    status: STATUS.disabled,
                 },
                 created_at: new Date(),
             }

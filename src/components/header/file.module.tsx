@@ -1,4 +1,5 @@
 import { builderContext } from "@/context/builderContext.module"
+import Head from "next/head";
 import { useContext, useEffect, useState } from "react"
 
 export function HeaderFile() {
@@ -12,11 +13,25 @@ export function HeaderFile() {
     }
 
     useEffect(() => {
+        const timeout = setTimeout(() => {
+            updateFilename(temp)
+        }, 300)
+        return () => {
+            clearTimeout(timeout)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [temp])
+
+    useEffect(() => {
         setTemp(name)
     }, [name])
 
     return (
         <div className="flex flex-nowrap items-center font-medium gap-2">
+            <Head>
+                <title>Privora | {name}</title>
+            </Head>
             <input
                 value={temp}
                 placeholder="Untitled Survey"

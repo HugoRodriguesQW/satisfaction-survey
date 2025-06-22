@@ -1,6 +1,7 @@
 import { BuilderEditor } from "@/components/builder/editor.module";
 import { BuilderPanel } from "@/components/builder/panel.module";
 import { BuilderSideBar } from "@/components/builder/sidebar.module";
+import { EditorSyncStatus } from "@/components/builder/sync.module";
 import { createDraggable } from "@/components/draggable.module";
 import { Header } from "@/components/header.module";
 import { PageContainer } from "@/components/page.module";
@@ -26,19 +27,23 @@ export default function Builder(props: BuilderProps) {
                 <DragTest.Context>
                     <MovableSection.Context>
                         <PageContainer noOverflow>
-                            <Header fixed showFile />
-                            <div className={twMerge("w-full h-full overflow-clip flex bg-background justify-between",
-                                firaCode.variable
-                            )}>
-                                <BuilderSideBar />
-                                <BuilderPanel />
-                                <BuilderEditor />
+                            <Header fixed showFile showSync />
+                            <div className="w-full h-full overflow-clip bg-background">
+                                <EditorSyncStatus />
+
+                                <div className={twMerge("w-full h-full overflow-clip flex justify-between",
+                                    firaCode.variable
+                                )}>
+                                    <BuilderSideBar />
+                                    <BuilderPanel />
+                                    <BuilderEditor />
+                                </div>
                             </div>
                         </PageContainer>
                     </MovableSection.Context>
                 </DragTest.Context>
             </DragItems.Context>
-        </BuilderContextProvider>
+        </BuilderContextProvider >
     )
 }
 

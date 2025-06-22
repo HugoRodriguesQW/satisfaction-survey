@@ -14,7 +14,7 @@ export function Sidebar() {
         "h-full flex lg:[&>*]:pl-8 [&>*]:px-4 lg:[*>*]:pr-0 border-r border-foreground/10 lg:max-w-[320px] lg:w-full",
         "flex-row sm:flex-col fixed bottom-0 left-0 h-auto w-full sm:static sm:h-full sm:w-auto",
         "overflow-y-auto",
-        "before-dark sm:no-before-dark rounded-none"
+        "rounded-none"
       )
     }>
       <Section icon={<FaRegFolderOpen />} name="Workspace" active path="/" />
