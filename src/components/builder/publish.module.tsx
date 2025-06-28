@@ -1,18 +1,24 @@
 import { useContext, useState } from "react";
-import { Modal } from "../modal";
+import { createModal } from "../modal";
 import { builderContext } from "@/context/builderContext.module";
 import { dataContext } from "@/context/dataContext.module";
 import { IoShareSocial } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 import { STATUS, STATUSValue } from "@/resources/definitions";
 
-import { SurveySchedule } from "./publish/SurveySchedule.module";
+import { endRelativeTime, startRelativeTime, SurveySchedule } from "./publish/SurveySchedule.module";
 import { PublishComponent, PublishSection, PublishTitle } from "./publish/Common.module";
+import { DataPicker } from "./publish/DataPicker.module";
+import { DateIndicator } from "./publish/DateIndicator";
+import { Separator } from "../separator.module";
 
 type BuilderPublishProps = {
     isOpen: boolean,
     handleClose: () => void;
 }
+
+export const PublishModal = createModal("main", "start-date", "end-date", "start-time", "end-time");
+
 export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
     const { id, name } = useContext(builderContext);
@@ -20,98 +26,137 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
     const key = id && keys ? keys[id]?.survey : "n";
 
-    const [status, setStatus] = useState<STATUSValue>(STATUS.disabled)
+    const [status, setStatus] = useState<STATUSValue>(STATUS.active)
 
-    const startTime = new Date(new Date().setHours(new Date().getHours() + 2));
-    const endTime = new Date(new Date().setHours(new Date().getHours()+ 6));
+    const [startTime, setStartTime] = useState<Date|undefined>(new Date());
+    const [endTime, setEndTime] = useState<Date|undefined>()
 
     return (
-        <Modal
+        <PublishModal
             isOpen={isOpen}
             handleClose={handleClose}
             anchor="top"
-            containerClassName="mt-12 max-w-[520px] mb-12"
+            containerClassName="mt-12  not-sm:max-w-[100%] not-sm:w-full  sm:max-w-[520px] mb-12"
             contentClassName="flex flex-col w-full"
         >
-            <PublishSection className="pb-2 pt-3">
-                <PublishComponent>
+            <PublishModal.Container container="main">
+                <PublishModal.Header container="main" className="pl-5 pr-3">
                     <PublishTitle>Publish  {`"${name}"`}</PublishTitle>
-                </PublishComponent>
-            </PublishSection>
+                </PublishModal.Header>
 
-            <PublishSection>
+                <PublishSection>
+                    <PublishComponent>
+                        <PublishTitle>
+                            Access sharing
+                        </PublishTitle>
+
+                        <div className="text-foreground/90">
+                            {status === STATUS.active && <>Your survey <span className="font-semibold text-green-500">has been publish</span> and anyone with this link can apply your questions.</>}
+                            {status === STATUS.scheduled && <>Your survey <span className="font-semibold text-neon-violet">has been scheduled</span> and anyone with this can apply when it starts.</>}
+                            {status === STATUS.disabled && <>Your survey <span className="font-semibold text-red-500">is not published</span> and you can publish it whenever you’re ready.</>}
+                            {status === STATUS.ended && (
+                                <>Your survey has <span className="font-semibold text-green-600">ended</span> and all responses have been successfully collected. You can republish anytime.</>
+                            )}
+                        </div>
+
+                        {
+                            ([STATUS.active, STATUS.scheduled] as STATUSValue[]).includes(status) && (
+                                <>
+                                    <div className="flex gap-2 w-full items-center">
+                                        <input className="focus:outline-0  border border-foreground/15 w-full  overflow-clip bg-foreground/5 rounded-md py-[0.1rem] text-lg px-3 text-foreground/60" value={`http://localhost:3000/apply/${id}/${key}`}>
+                                        </input>
+                                        <button className="p-1 flex gap-1 items-center px-2 rounded-md border border-foreground/15 bg-foreground/5 hover:bg-foreground/20"><IoShareSocial className="w-5 h-5" /> <div>Share</div></button>
+                                    </div>
+                                    <button className={twMerge(
+                                        "p-1 mt-3 flex gap-1 items-center px-2 rounded-md border border-foreground/15 bg font-medium text-sm",
+                                        "bg-gradient-to-br from-red-500/60 to-red-600/60 hover:to-red-500/80"
+                                    )}>Revoke access</button>
+                                </>
+                            )
+                        }
+                    </PublishComponent>
+                </PublishSection>
+
+                <SurveySchedule start={startTime} end={endTime} onClick={() => { }} />
+
+                <PublishSection>
+                    <PublishComponent className="flex justify-between items-center">
+
+                        {
+                            ([STATUS.ended] as STATUSValue[]).includes(status) && (
+                                <>
+                                    <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md text-sm hover:bg-foreground/30">Clear all 43 applies</button>
+                                    <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] hover:bg-foreground/30 rounded-md text-sm">Republish</button>
+                                </>)
+                        }
+
+                        {
+                            ([STATUS.active] as STATUSValue[]).includes(status) && (
+                                <>
+                                    <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md text-sm hover:bg-foreground/30">Clear all 43 applies</button>
+                                    <button className="bg-red-500/70 font-bold px-6 py-[0.3rem] hover:bg-red-500/90 rounded-md text-sm">Disable</button>
+                                </>)
+                        }
+
+                        {
+                            ([STATUS.disabled] as STATUSValue[]).includes(status) && (
+                                <>
+                                    <div className="text-foreground/70">All ready to publish</div>
+                                    <button className="tail-button bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md">Publish</button>
+                                </>)
+                        }
+
+                        {
+                            ([STATUS.scheduled] as STATUSValue[]).includes(status) && (
+                                <>
+                                    <div className="text-foreground/70">You can disable the schedule</div>
+                                    <button className="font-bold px-6 py-[0.3rem] hover:bg-red-500/90 rounded-md text-sm">Disable</button>
+                                </>
+                            )
+                        }
+                    </PublishComponent>
+                </PublishSection>
+
+            </PublishModal.Container>
+
+            <PublishModal.Container container="start-date">
+                <PublishModal.Header container="start-date" backTo="main" className="px-3">
+                    <PublishTitle>Schedule: start at</PublishTitle>
+                </PublishModal.Header>
                 <PublishComponent>
-                    <PublishTitle>
-                        Access sharing
-                    </PublishTitle>
+                    <DataPicker value={startTime} onChange={setStartTime} min={new Date()} />
 
-                    <div className="text-foreground/90">
-                        {status === STATUS.active && <>Your survey <span className="font-semibold text-green-500">has been publish</span> and anyone with this link can apply your questions.</>}
-                        {status === STATUS.scheduled && <>Your survey <span className="font-semibold text-neon-violet">has been scheduled</span> and anyone with this can apply when it starts.</>}
-                        {status === STATUS.disabled && <>Your survey <span className="font-semibold text-red-500">is not published</span> and you can publish it whenever you’re ready.</>}
-                        {status === STATUS.ended && (
-                            <>Your survey has <span className="font-semibold text-green-600">ended</span> and all responses have been successfully collected. You can republish anytime.</>
-                        )}
+                    <div className="flex flex-col items-center mb-5 mt-1">
+                        <DateIndicator date={endTime} relative={startRelativeTime(startTime)} />
+                       <button className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
+                            Change time
+                        </button>
+
                     </div>
-
-                    {
-                        ([STATUS.active, STATUS.scheduled] as STATUSValue[]).includes(status) && (
-                            <>
-                                <div className="flex gap-2 w-full items-center">
-                                    <input className="focus:outline-0  border border-foreground/15 w-full  overflow-clip bg-foreground/5 rounded-md py-[0.1rem] text-lg px-3 text-foreground/60" value={`http://localhost:3000/apply/${id}/${key}`}>
-                                    </input>
-                                    <button className="p-1 flex gap-1 items-center px-2 rounded-md border border-foreground/15 bg-foreground/5 hover:bg-foreground/20"><IoShareSocial className="w-5 h-5" /> <div>Share</div></button>
-                                </div>
-                                <button className={twMerge(
-                                    "p-1 mt-3 flex gap-1 items-center px-2 rounded-md border border-foreground/15 bg font-medium text-sm",
-                                    "bg-gradient-to-br from-red-500/60 to-red-600/60 hover:to-red-500/80"
-                                )}>Revoke access</button>
-                            </>
-                        )
-                    }
                 </PublishComponent>
-            </PublishSection>
 
-            <SurveySchedule start={startTime} end={endTime} onClick={() => { }} />
+            </PublishModal.Container>
 
-            <PublishSection>
-                <PublishComponent className="flex justify-between items-center">
 
-                    {
-                        ([STATUS.ended] as STATUSValue[]).includes(status) && (
-                            <>
-                                <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md text-sm hover:bg-foreground/30">Clear all 43 applies</button>
-                                <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] hover:bg-foreground/30 rounded-md text-sm">Republish</button>
-                            </>)
-                    }
+            <PublishModal.Container container="end-date" defaultOpen={true}>
+                <PublishModal.Header container="end-date" backTo="main" className="px-3" >
+                    <PublishTitle>Schedule: end at</PublishTitle>
+                </PublishModal.Header>
 
-                    {
-                        ([STATUS.active] as STATUSValue[]).includes(status) && (
-                            <>
-                                <button className="bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md text-sm hover:bg-foreground/30">Clear all 43 applies</button>
-                                <button className="bg-red-500/70 font-bold px-6 py-[0.3rem] hover:bg-red-500/90 rounded-md text-sm">Disable</button>
-                            </>)
-                    }
+                <PublishComponent>
+                    <DataPicker value={endTime} onChange={setEndTime} startAt={startTime} min={startTime} />
 
-                    {
-                        ([STATUS.disabled] as STATUSValue[]).includes(status) && (
-                            <>
-                                <div className="text-foreground/70">All ready to publish</div>
-                                <button className="tail-button bg-foreground/20 font-bold px-6 py-[0.3rem] rounded-md">Publish</button>
-                            </>)
-                    }
+                    <Separator className="mt-4"/>
+                    <div className="flex flex-col items-center mb-5 mt-1">
+                        <DateIndicator date={endTime} relative={endRelativeTime(endTime, startTime)} />
+                        <button className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
+                            Change time
+                        </button>
 
-                    {
-                        ([STATUS.scheduled] as STATUSValue[]).includes(status) && (
-                            <>
-                                <div className="text-foreground/70">You can disable the schedule</div>
-                                <button className="bg-red-500/70 font-bold px-6 py-[0.3rem] hover:bg-red-500/90 rounded-md text-sm">Disable</button>
-                            </>
-                        )
-                    }
+                    </div>
                 </PublishComponent>
-            </PublishSection>
-        </Modal>
+            </PublishModal.Container>
+        </PublishModal>
     )
 }
 

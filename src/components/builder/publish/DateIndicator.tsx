@@ -8,9 +8,10 @@ type DateSelectorProps = {
     onClick?: () => void;
     disabled?: boolean,
     emptyText?: string
+    disableTime?: boolean;
 }
 
-export function DateSelector(props: DateSelectorProps) {
+export function DateIndicator(props: DateSelectorProps) {
 
 
     if (!props.date) {
@@ -32,8 +33,8 @@ export function DateSelector(props: DateSelectorProps) {
 
 
     return (
-        <Content className={twMerge(props.active && "", "flex-row items-center gap-1")}>
-            <FaRegClock className="w-4 h-4 fill-foreground/50 mr-0.5"/>
+        <Content className={twMerge(props.active && "", "flex-row items-center gap-1 max-sm:flex-wrap")}>
+            <FaRegClock className="w-4 h-4 fill-foreground/50 mr-0.5" />
             <div className="flex flex-nowrap gap-0.5 justify-center mr-1.5">
                 {date.map(([t, sep], i) =>
                     <div className="flex flex-nowrap gap-0.5" key={"publish-date-date-" + i}>
@@ -43,25 +44,31 @@ export function DateSelector(props: DateSelectorProps) {
                 )}
             </div>
 
-            <div className="bg-foreground w-[3px] h-[3px] rounded-full mr-1.5" />
-            <div className="flex flex-nowrap gap-0.5 justify-center">
-                {time.map(([t, sep], i) =>
-                    <div className="flex flex-nowrap gap-0.5" key={"publish-date-time-" + i}>
-                        <span className="">{t.padStart(2, "0")}</span>
-                        <span className="text-foreground/50">{sep}</span>
-                    </div>
-                )}
+            {
+                !props.disableTime && (
+                    <>
+                        <div className="bg-foreground w-[3px] h-[3px] rounded-full mr-1.5" />
+                        <div className="flex flex-nowrap gap-0.5 justify-center">
+                            {time.map(([t, sep], i) =>
+                                <div className="flex flex-nowrap gap-0.5" key={"publish-date-time-" + i}>
+                                    <span className="">{t.padStart(2, "0")}</span>
+                                    <span className="text-foreground/50">{sep}</span>
+                                </div>
+                            )}
 
 
-                {indicator.map(([t, sep], i) =>
-                    <div className="flex flex-nowrap gap-0.5" key={"publish-date-indicator-" + i}>
-                        <span>{t}</span>
-                        <span>{sep}</span>
-                    </div>
-                )}
-            </div>
+                            {indicator.map(([t, sep], i) =>
+                                <div className="flex flex-nowrap gap-0.5" key={"publish-date-indicator-" + i}>
+                                    <span>{t}</span>
+                                    <span>{sep}</span>
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )
+            }
 
-            <div className="text-green-500/80 ml-2">{props.relative}</div>
+            <div className="text-green-500/80 ml-2 max-sm:w-full">{props.relative}</div>
         </Content >
     )
 }
@@ -72,7 +79,7 @@ function Content({ children, className, ...rest }: ContentProps) {
     return (
         <div
             className={twMerge(
-                "rounded-md flex h-full justify-center items-center text-foreground/80",
+                "rounded-md flex h-full max-sm:w-full justify-center items-center text-foreground/80",
                 "p-1 pb-2 font-bold",
                 className,
             )}

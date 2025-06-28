@@ -5,53 +5,53 @@
     @apply text-neon-mid my-0 flex cursor-pointer flex-row items-center gap-1
     hover:underline;
   }
-  
+
   .tail-text-input {
     @apply bg-foreground/[.05] rounded-full p-2 px-3 outline-0;
   }
-  
+
   .tail-button {
     @apply from-neon to-neon-sub bg-gradient-to-br;
   }
-  
+
   .tail-button-violet {
     @apply from-neon-sub bg-gradient-to-br to-violet-700;
   }
-  
+
   .skeleton {
     @apply from-foreground/10 from-[0px] via-foreground/35 via-[40px]
     to-foreground/10 to-[80px] bg-gradient-to-r;
     background-size: 300% 100%;
     animation: shimmer 1.6s infinite linear;
   }
-  
+
   .workspace-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-auto-rows: 1fr;
     gap: 0.5rem;
   }
-  
+
   .builder-sidebar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     grid-auto-rows: 1fr;
     gap: 0.5rem;
   }
-  
+
   .before-dark {
     isolation: isolate;
     background-color: var(--background);
   }
-  
+
   .before-dark.rounded-none::before {
     border-radius: 0;
   }
-  
+
   .before-dark:not(.rounded-none)::before {
     @apply rounded-b-md;
   }
-  
+
   .before-dark:not(.no-before-dark)::before {
     content: " ";
     position: absolute;
@@ -60,38 +60,121 @@
     z-index: 0;
     pointer-events: none;
   }
-  
+
   .animation-logo-2 {
     animation: 5s logo-2 forwards;
     animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
   }
-  
-  @media (min-width:640px) {
+
+  @media (min-width: 640px) {
     .sm\: no-before-dark::before {
       @apply hidden;
     }
-    
+
     .sm\::before {
       @apply hidden;
     }
   }
-  
+
   .options-grid-template {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.4fr) 1.75rem;
   }
-  
+
   .font-mono {
     font-family: var(--font-fira-code), monospace;
   }
-  
+
   .awersome-box {
     background-color: transparent;
     background-image: radial-gradient(var(--color-neon-sub) 10%, transparent 60%);
     background-size: 4rem 4rem;
   }
-  
+
   .modal-backdrop {
-    animation: 1s modal-backdrop forwards cubic-bezier(.72,0,.98,.13);
+    animation: 1s modal-backdrop forwards cubic-bezier(0.72, 0, 0.98, 0.13);
+  }
+
+  .react-calendar {
+    @apply flex flex-col gap-3;
+  }
+
+  .react-calendar__navigation {
+    @apply flex justify-between gap-1;
+  }
+
+  .react-calendar__navigation > * {
+    @apply flex-1 py-2 hover:bg-foreground/20 bg-foreground/5 rounded-md;
+  }
+
+  .react-calendar__navigation .react-calendar__navigation__label {
+    @apply min-w-[50%];
+  }
+
+  .react-calendar__month-view__weekdays {
+    @apply mb-1 text-center;
+  }
+
+  .react-calendar__month-view__weekdays abbr {
+    @apply no-underline;
+  }
+
+  .react-calendar__month-view__weekdays,
+  .react-calendar__month-view__days,
+  .react-calendar__year-view__months,
+  .react-calendar__decade-view__years,
+  .react-calendar__century-view__decades {
+    @apply gap-1;
+  }
+
+  .react-calendar__month-view__weekdays > * {
+    @apply bg-foreground/5 py-1;
+  }
+
+  .react-calendar__month-view__days > * {
+    @apply aspect-square hover:bg-foreground/20 bg-foreground/10 transition duration-75;
+  }
+
+  .react-calendar__year-view__months > *,
+  .react-calendar__decade-view__years > *,
+  .react-calendar__century-view__decades * {
+    @apply bg-foreground/5 py-3 hover:bg-foreground/20;
+  }
+
+  .react-calendar__month-view__weekdays > *,
+  .react-calendar__month-view__days > * {
+    flex: 0 0 calc(14.2857% - 0.25rem) !important;
+  }
+
+  .react-calendar__year-view__months > *,
+  .react-calendar__decade-view__years > *,
+  .react-calendar__century-view__decades * {
+    flex: 0 0 calc(33.53333% - 0.25rem) !important;
+  }
+
+  .react-calendar button:disabled {
+    opacity: 0.1 !important;
+  }
+
+  .react-calendar__tile--now {
+    @apply bg-foreground/15 hover:bg-foreground/30;
+  }
+
+  .react-calendar__month-view__weekdays__weekday--weekend + .react-calendar__month-view__weekdays__weekday--weekend,
+  .react-calendar__month-view__weekdays__weekday--weekend:first-child {
+    @apply bg-red-500/30;
+  }
+
+  .react-calendar__month-view__days__day--weekend + .react-calendar__month-view__days__day--weekend,
+  .react-calendar__month-view__days__day--weekend:first-child {
+    @apply bg-red-500/30;
+  }
+
+  .react-calendar.picked .react-calendar__tile--active {
+    @apply bg-gradient-to-br from-neon to-neon-sub;
+  }
+
+  .react-calendar__month-view__days__day--neighboringMonth {
+    @apply opacity-50;
   }
 }
 
@@ -116,7 +199,7 @@
   --font-sans: var(--font-geist-sans);
 }
 
-@media (prefers-color-scheme:dark) {
+@media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -151,9 +234,9 @@ body {
 }
 
 input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
   -webkit-background-clip: text;
   -webkit-text-fill-color: var(--foreground);
   transition: background-color 5000s ease-in-out 0s;
@@ -166,16 +249,16 @@ input:-webkit-autofill,
     background-position: 100% 0;
     filter: invert(0.3);
   }
-  
+
   50% {
     filter: invert(0);
   }
-  
+
   40%,
   100% {
     background-position: -100% 0;
   }
-  
+
   100% {
     filter: invert(0.3);
   }
@@ -211,19 +294,19 @@ input:-webkit-autofill,
   0% {
     transform: translateX(0);
   }
-  
+
   10%,
   14%,
   20% {
     transform: translateX(1%);
   }
-  
+
   12%,
   16%,
   22% {
     transform: translateX(-1%);
   }
-  
+
   24%,
   100% {
     transform: translateX(13%);
@@ -239,7 +322,7 @@ input:-webkit-autofill,
   from {
     opacity: 0;
   }
-  
+
   to {
     opacity: 1;
   }

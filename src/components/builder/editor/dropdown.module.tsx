@@ -11,10 +11,11 @@ type DropdownFieldProps<T extends string> = {
     label: ReactNode,
 } & {
     onChange?: (value: T) => void;
-    optionStyle?: (value: T) => HTMLAttributes<HTMLButtonElement>["className"]
+    optionStyle?: (value: T) => HTMLAttributes<HTMLButtonElement>["className"];
+    buttonStyle?: HTMLAttributes<HTMLButtonElement>["className"]
 }
 
-export function DropdownField<T extends string>({ options, label, texts, value, onChange, optionStyle }: DropdownFieldProps<T>) {
+export function DropdownField<T extends string>({ options, label, texts, value, onChange, optionStyle, buttonStyle }: DropdownFieldProps<T>) {
 
     const current = value ? options.indexOf(value) : -1
 
@@ -25,6 +26,7 @@ export function DropdownField<T extends string>({ options, label, texts, value, 
             <Menu as="div" className="relative">
                 <MenuButton ref={ref} className={twMerge(
                     "inline-flex items-center gap-2 rounded-md bg-foreground/10 px-[0.4rem]  py-[0.3rem] outline-none  text-sm focus:not-data-focus:outline-none data-focus:outline data-focus:outline-foreground data-hover:bg-foreground/15 data-open:bg-foreground/20 w-full justify-between",
+                    buttonStyle
                 )}>
                     {texts?.[current] ?? value} <BiChevronDown />
                 </MenuButton>
