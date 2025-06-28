@@ -1,6 +1,60 @@
 import { v4 as uuidv4 } from 'uuid';
+import { TimeLongUnit, TimeUnit } from './definitions';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+
+/* Function to plurarize the text */
+export function plural(text: string, number: number, customchar?: string) {
+  if (number !== 1) {
+    return text + (customchar ?? "s")
+  }
+
+  return text;
+}
+
+/* Function to convert time range in awesome text display */
+type RelativeTimeCustom = {
+  inText?: string,
+  agoText?: string,
+  lowDiffText?: string,
+  useLong?: boolean
+}
+
+export const RelativeTime = (date1?: Date, date2?: Date, custom?: RelativeTimeCustom) => {
+
+  const props = {
+    custom: {
+      agoText: custom?.agoText ?? "ago",
+      inText: custom?.inText ?? "in",
+      lowDiffText: custom?.lowDiffText ?? "now",
+      useLong: custom?.useLong ?? false
+    } as RelativeTimeCustom
+  }
+
+  if (!date1 || !date2) {
+    return props.custom.lowDiffText
+  }
+  const diff = date1.getTime() - date2.getTime();
+
+
+
+  if (Math.abs(diff) <= TimeUnit.m) {
+    return props.custom.lowDiffText
+  }
+
+  const unit = (Object.keys(TimeUnit) as TimeUnit[]).sort((a, b) => TimeUnit[a] - TimeUnit[b]).findLast((unit) => TimeUnit[unit] <= Math.abs(diff))
+
+  if (!unit) {
+    return `${diff}${props.custom.useLong ? " " + plural(TimeLongUnit.ms, diff) : "ms"}`
+  }
+
+  const rounded = Math.abs(Math.floor(diff / TimeUnit[unit]))
+
+  return `${diff > 0 ? `${props.custom.inText} ` : ""}${rounded}${props.custom.useLong ? " " + plural(TimeLongUnit[unit], rounded) : unit
+    }${diff <= 0 ? ` ${props.custom.agoText}` : ""}`
+}
+
 
 /*  Fuction to validate the properties type */
 export function it(...props: unknown[]) {

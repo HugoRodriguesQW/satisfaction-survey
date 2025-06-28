@@ -89,6 +89,10 @@
     background-image: radial-gradient(var(--color-neon-sub) 10%, transparent 60%);
     background-size: 4rem 4rem;
   }
+  
+  .modal-backdrop {
+    animation: 1s modal-backdrop forwards cubic-bezier(.72,0,.98,.13);
+  }
 }
 
 :root {
@@ -228,5 +232,15 @@ input:-webkit-autofill,
 
 @keyframes builder-awesome {
   0% {
+  }
+}
+
+@keyframes modal-backdrop {
+  from {
+    opacity: 0;
+  }
+  
+  to {
+    opacity: 1;
   }
 }

@@ -66,6 +66,8 @@ export function SearchBar({ onChange, searchDelay = 1000, input }: SearchBarProp
         />
         <button
           className="absolute right-0 px-3"
+          name="Search"
+          title="Search"
           onClick={() => {
             if (search.length) {
               onChange?.(search);

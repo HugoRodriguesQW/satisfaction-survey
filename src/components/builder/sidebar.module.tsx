@@ -17,6 +17,7 @@ type SidebarItemProps = {
 export function BuilderSideBar() {
     return (
         <Resizable axis={["x"]} className="min-w-[360px] max-w-[500px] px-3" handler>
+    
             <DynamicBox onChange={(rect, w) => {
                 return {
                     maxHeight: `${w.height - rect.top}px`,

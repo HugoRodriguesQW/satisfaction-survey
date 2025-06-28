@@ -10,9 +10,9 @@ export function HeaderSyncStatus() {
 
     return (
         <div className="flex flex-nowrap items-center font-medium gap-2">
-            {syncStatus === Sync.Ok && <IoCheckmarkCircleOutline className="w-8 h-8 text-green-500 opacity-75" />}
-            {syncStatus === Sync.Syncing && <IoSyncOutline className="w-8 h-8 animate-spin duration-200 opacity-85" />}
-            {syncStatus === Sync.Fail && <MdOutlineSyncProblem className="text-red-500 w-8 h-8 " />}
+            {syncStatus === Sync.Ok && <IoCheckmarkCircleOutline className="w-7 h-7 text-green-500 opacity-75" />}
+            {syncStatus === Sync.Syncing && <IoSyncOutline className="w-7 h-7 animate-spin duration-200 opacity-85" />}
+            {syncStatus === Sync.Fail && <MdOutlineSyncProblem className="text-red-500 w-7 h-7 " />}
         </div>
     )
 }

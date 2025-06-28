@@ -45,6 +45,9 @@ export async function createLoginTransaction(client: Client, email: string) {
     tasks: tasks.map(Task.save),
   });
 
+
+  console.info({transaction});
+  transaction.acknowledged.valueOf();
   if (!transaction.insertedId) return false;
 
 

@@ -2,6 +2,31 @@ import { Operations } from "./definitions/operations";
 import { FontFamily, FontWeight } from "./definitions/typography";
 import { clone, merge, SafeObject } from "./utils";
 
+// Time Definitions
+export const TimeUnit = {
+  "ms": 1 * 1,
+  "s": 1 * 1000,
+  "m": 1000 * 60,
+  "h": 1000 * 60 * 60,
+  "d": 1000 * 60 * 60 * 24,
+  "w": 1000 * 60 * 60 * 24 * 7,
+  "mo": 1000 * 60 * 60 * 24 * 28,
+  "y": 1000 * 60 * 60 * 24 * 265
+} as const;
+export type TimeUnit = keyof typeof TimeUnit;
+
+export const TimeLongUnit = {
+  "ms": "millisecond",
+  "s": "second",
+  "m": "minute",
+  "h": "hour",
+  "d": "day",
+  "w": "week",
+  "mo": "month",
+  "y": "year"
+} as const;
+export type TimeLongUnit = keyof typeof TimeLongUnit;
+
 // Survey Definitions
 export const STATUS = {
   disabled: 0,
@@ -102,8 +127,6 @@ export const TextInputQuestion = SafeObject(merge(clone(QuestionProperties), { t
     placeholder: 1,
   },
 });
-
-console.info({ TextInputQuestion });
 
 export const SelectionQuestion = SafeObject(merge(clone(QuestionProperties), { type: "selection" } as const), {
   id: 1,

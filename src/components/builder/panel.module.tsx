@@ -35,7 +35,7 @@ export function BuilderPanel() {
                 maxHeight: `${w.height - rect.top}px`,
             }
         }} className="overflow-auto flex-1 px-5 py-5 pb-[128px]">
-
+            
 
 
             <div className="flex flex-col w-full gap-3">

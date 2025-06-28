@@ -25,12 +25,15 @@ export function AwesomeBox(props: { className?: HTMLAttributes<HTMLDivElement>["
         }
     }, []);
 
+    const className = twMerge("absolute top-0 left-0 w-full h-full", props.className)
+
     return (
         <>
             <script src="particles/particles.js" defer />
-            <div id="awesome-box3" className={twMerge("absolute top-0 left-0 w-full h-full", props.className)}></div>
-            <div id="awesome-box2" className={twMerge("absolute top-0 left-0 w-full h-full", props.className)}></div>
-            <div id="awesome-box" className={twMerge("absolute top-0 left-0 w-full h-full", props.className)}></div>
+            <div id="awesome-box3" className={className}></div>
+            <div id="awesome-box2" className={className}></div>
+            <div id="awesome-box" className={className}></div>
+            <div className={twMerge(className, "backdrop-blur-xs opacity-50 backdrop-contrast-125")}></div>
         </>
     );
 }

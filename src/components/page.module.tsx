@@ -10,7 +10,7 @@ export function PageContainer({ children, noOverflow }: ContainerProps) {
   return (
     <div className={
       twMerge(
-        "fixed top-0 left-0 w-full h-full overflow-auto grid grid-rows-[20px_1fr] items-center justify-items-center pb-0 gap-16 pt-8 font-[family-name:var(--font-geist-sans)]",
+        "fixed top-0 left-0 w-full h-full overflow-auto grid grid-rows-[20px_1fr] items-center justify-items-center pb-0 gap-16 pt-6 font-[family-name:var(--font-geist-sans)]",
         noOverflow && "overflow-clip"
       )
     }>

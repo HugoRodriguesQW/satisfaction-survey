@@ -15,7 +15,7 @@ import { BiPlusCircle } from "react-icons/bi";
 import { SwitchField } from "./editor/switch.module";
 import { Operations } from "@/resources/definitions/operations";
 import { IoTrash } from "react-icons/io5";
-import { PiGearFineBold } from "react-icons/pi";
+import { EditorMenuBar } from "./menubar.module";
 
 type _internEditorProps<T> = {
     current: number,
@@ -30,6 +30,7 @@ export function BuilderEditor() {
         <Resizable axis={["x"]} border={{
             x: "left", y: "bottom"
         }} className="min-w-[420px] max-w-[520px]" handler>
+            <EditorMenuBar />
             <DynamicBox onChange={(rect, w) => {
                 return {
                     maxHeight: `${w.height - rect.top}px`,
@@ -97,18 +98,16 @@ function SectionEditor({ }: _internEditorProps<Question>) {
 
     return (
         <EditorContainer name="basic properties" suffix={
-            <div className="flex gap-2 text-foreground/60">
+            <div className="flex gap-2 text-foreground/80">
                 <button
                     onClick={() => {
                         removeQuestion(current)
                     }}
-                    className="bg-red-500/70 p-1 px-2 rounded-xs flex items-center flex-nowrap font-normal gap-1">
-                    <IoTrash />
+                    className="bg-red-500/60 text-foreground p-1 px-2 rounded-xs flex items-center flex-nowrap font-normal gap-1">
+                    <IoTrash /> Remove
                 </button>
 
-                <button className="bg-foreground/20 p-1 px-2 rounded-xs flex items-center flex-nowrap font-normal  gap-1">
-                    <PiGearFineBold /> Advanced
-                </button>
+
             </div>
         }>
             <TextField label="Title" value={currentQuestion.section.title} onChange={(value) => {

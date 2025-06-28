@@ -2,7 +2,7 @@ import { Logo } from "./icons/logo.module";
 import { Account } from "./header/account.module";
 import { twMerge } from "tailwind-merge";
 import { HeaderFile } from "./header/file.module";
-import { HeaderSyncStatus } from "./header/sync";
+
 
 type HeaderProps = {
   showAccount?: boolean;
@@ -20,8 +20,8 @@ export function Header({ showAccount = true, showFile = false, showSync = false,
     <>
       {fixed && <div className="h-15" />}
       <header className={
-        twMerge("w-full flex justify-between h-18 items-center border-b-foreground/5 border-b-1 px-8",
-          fixed && "fixed top-0 left-0 bg-background",
+        twMerge("w-full flex justify-between h-18 items-center border-b-foreground/5 border-b-1 px-8  backdrop-blur-md",
+          fixed && "fixed   top-0 left-0 bg-background",
           "z-[99]"
         )
       }>
@@ -36,12 +36,8 @@ export function Header({ showAccount = true, showFile = false, showSync = false,
         }
 
 
-        <div className="flex gap-4">
-          {
-            showSync && <HeaderSyncStatus />
-          }
-          {showAccount && <Account />}
-        </div>
+        {showAccount && <Account />}
+
       </header>
     </>
   );

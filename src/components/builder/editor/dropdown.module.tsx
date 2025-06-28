@@ -29,7 +29,7 @@ export function DropdownField<T extends string>({ options, label, texts, value, 
                     {texts?.[current] ?? value} <BiChevronDown />
                 </MenuButton>
 
-                <MenuItems className={twMerge("origin-top-right before-dark min-w-[var(--button-width)]"
+                <MenuItems className={twMerge("origin-top-right before-dark min-w-[var(--button-width)] z-40"
                 )} anchor="bottom end" transition>
                     {
                         options.map((option, i) => (
