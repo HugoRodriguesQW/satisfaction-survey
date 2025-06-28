@@ -26,7 +26,7 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
     const key = id && keys ? keys[id]?.survey : "n";
 
-    const [status, setStatus] = useState<STATUSValue>(STATUS.active)
+    const [status, setStatus] = useState<STATUSValue>(STATUS.disabled)
 
     const [startTime, setStartTime] = useState<Date|undefined>(new Date());
     const [endTime, setEndTime] = useState<Date|undefined>()
@@ -39,7 +39,7 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
             containerClassName="mt-12  not-sm:max-w-[100%] not-sm:w-full  sm:max-w-[520px] mb-12"
             contentClassName="flex flex-col w-full"
         >
-            <PublishModal.Container container="main">
+            <PublishModal.Container container="main" defaultOpen>
                 <PublishModal.Header container="main" className="pl-5 pr-3">
                     <PublishTitle>Publish  {`"${name}"`}</PublishTitle>
                 </PublishModal.Header>
@@ -138,7 +138,7 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
             </PublishModal.Container>
 
 
-            <PublishModal.Container container="end-date" defaultOpen={true}>
+            <PublishModal.Container container="end-date">
                 <PublishModal.Header container="end-date" backTo="main" className="px-3" >
                     <PublishTitle>Schedule: end at</PublishTitle>
                 </PublishModal.Header>
