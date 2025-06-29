@@ -55,6 +55,10 @@ export const RelativeTime = (date1?: Date, date2?: Date, custom?: RelativeTimeCu
     }${diff <= 0 ? ` ${props.custom.agoText}` : ""}`
 }
 
+export function timeDiff(date1: Date, date2: Date) {
+  return date1.getTime() - date2.getTime()
+}
+
 
 /*  Fuction to validate the properties type */
 export function it(...props: unknown[]) {

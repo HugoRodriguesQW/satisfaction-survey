@@ -22,12 +22,12 @@ export function DataPicker({ value, startAt, onChange, min, max }: DataPickerPro
 
                 if (!value) {
                     const now = new Date();
-                    return onChange?.(new Date(date.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0)))
+                    const update = new Date(date.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0))
+                    return onChange?.(update < (min ?? -Infinity) ? min : (update > (max ?? Infinity)) ? max : update)
                 }
                 onChange?.(new Date(date.setHours(value.getHours(), value.getMinutes(), value.getSeconds())))
 
             }}
-
                 defaultActiveStartDate={startAt}
                 value={value} minDate={min} maxDate={max} calendarType="gregory" />
         </div>

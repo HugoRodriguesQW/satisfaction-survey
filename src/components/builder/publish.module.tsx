@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createModal } from "../modal";
 import { builderContext } from "@/context/builderContext.module";
 import { dataContext } from "@/context/dataContext.module";
@@ -6,11 +6,8 @@ import { IoShareSocial } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 import { STATUS, STATUSValue } from "@/resources/definitions";
 
-import { endRelativeTime, startRelativeTime, SurveySchedule } from "./publish/SurveySchedule.module";
+import { ScheduleDateContainer, ScheduleTimeContainer, SurveySchedule } from "./publish/SurveySchedule.module";
 import { PublishComponent, PublishSection, PublishTitle } from "./publish/Common.module";
-import { DataPicker } from "./publish/DataPicker.module";
-import { DateIndicator } from "./publish/DateIndicator";
-import { Separator } from "../separator.module";
 
 type BuilderPublishProps = {
     isOpen: boolean,
@@ -28,8 +25,15 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
     const [status, setStatus] = useState<STATUSValue>(STATUS.disabled)
 
-    const [startTime, setStartTime] = useState<Date|undefined>(new Date());
-    const [endTime, setEndTime] = useState<Date|undefined>()
+    const [startTime, setStartTime] = useState<Date | undefined>(new Date());
+    const [endTime, setEndTime] = useState<Date | undefined>()
+
+    useEffect(() => {
+        if ((startTime?.getTime() ?? -Infinity) >= (endTime?.getTime() ?? Infinity)) {
+            setEndTime(undefined)
+        }
+
+    }, [startTime, endTime])
 
     return (
         <PublishModal
@@ -40,7 +44,7 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
             contentClassName="flex flex-col w-full"
         >
             <PublishModal.Container container="main" defaultOpen>
-                <PublishModal.Header container="main" className="pl-5 pr-3">
+                <PublishModal.Header className="pl-5 pr-3">
                     <PublishTitle>Publish  {`"${name}"`}</PublishTitle>
                 </PublishModal.Header>
 
@@ -119,47 +123,13 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
             </PublishModal.Container>
 
-            <PublishModal.Container container="start-date">
-                <PublishModal.Header container="start-date" backTo="main" className="px-3">
-                    <PublishTitle>Schedule: start at</PublishTitle>
-                </PublishModal.Header>
-                <PublishComponent>
-                    <DataPicker value={startTime} onChange={setStartTime} min={new Date()} />
-
-                    <div className="flex flex-col items-center mb-5 mt-1">
-                        <DateIndicator date={endTime} relative={startRelativeTime(startTime)} />
-                       <button className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
-                            Change time
-                        </button>
-
-                    </div>
-                </PublishComponent>
-
-            </PublishModal.Container>
-
-
-            <PublishModal.Container container="end-date">
-                <PublishModal.Header container="end-date" backTo="main" className="px-3" >
-                    <PublishTitle>Schedule: end at</PublishTitle>
-                </PublishModal.Header>
-
-                <PublishComponent>
-                    <DataPicker value={endTime} onChange={setEndTime} startAt={startTime} min={startTime} />
-
-                    <Separator className="mt-4"/>
-                    <div className="flex flex-col items-center mb-5 mt-1">
-                        <DateIndicator date={endTime} relative={endRelativeTime(endTime, startTime)} />
-                        <button className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
-                            Change time
-                        </button>
-
-                    </div>
-                </PublishComponent>
-            </PublishModal.Container>
+            <ScheduleDateContainer variant="start" onChange={setStartTime} start={startTime} end={endTime} />
+            <ScheduleDateContainer variant="end" onChange={setEndTime} start={startTime} end={endTime} />
+            <ScheduleTimeContainer variant="start" onChange={setStartTime} start={startTime} end={endTime} />
+            <ScheduleTimeContainer variant="end" onChange={setEndTime} start={startTime} end={endTime} />
         </PublishModal>
     )
 }
-
 
 
 

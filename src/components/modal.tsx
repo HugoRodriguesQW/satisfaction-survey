@@ -104,8 +104,24 @@ export function createModal<T extends string>(...containers: T[]) {
         )
     }
 
+    type ModalSwitchProps = { to: T, children: React.FunctionComponent<{ caller: () => void }> }
 
-    type ModalHeaderProps = React.HTMLAttributes<HTMLDivElement> & { container: T, backTo?: T, disableBack?: boolean, disableClose?: boolean }
+    Modal.Switch = function ModalSwitch({ to, children }: ModalSwitchProps) {
+        const { switchTo } = useContext(modalContext);
+
+        function caller() {
+            switchTo(to);
+        }
+
+        if (typeof children === "function") {
+            return children({ caller });
+        }
+
+        return null;
+    }
+
+    type ModalHeaderProps = React.HTMLAttributes<HTMLDivElement> & { container?: T, backTo?: T, disableBack?: boolean, disableClose?: boolean }
+
 
 
     Modal.Header = function ModalHeader({ className, children, container, backTo, disableClose = false, ...rest }: ModalHeaderProps) {
@@ -117,7 +133,7 @@ export function createModal<T extends string>(...containers: T[]) {
             if (backTo) switchTo(backTo)
         }
 
-        if (currentContainer !== container) {
+        if (container && currentContainer !== container) {
             return null;
         }
 

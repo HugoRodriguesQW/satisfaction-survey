@@ -17,6 +17,7 @@ export function DateIndicator(props: DateSelectorProps) {
     if (!props.date) {
         return (
             <Content className={twMerge(props.active && "")}>
+                <FaRegClock className="w-4 h-4 fill-foreground/50 mr-0.5" />
                 {props.emptyText}
                 <div className="text-green-500/80 not-first:ml-2">{props.relative}</div>
             </Content>

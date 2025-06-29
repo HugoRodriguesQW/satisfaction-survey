@@ -176,6 +176,11 @@
   .react-calendar__month-view__days__day--neighboringMonth {
     @apply opacity-50;
   }
+
+  .scroll-time-picker {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 70%, transparent 98%);
+    mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 70%, transparent 98%);
+  }
 }
 
 :root {
