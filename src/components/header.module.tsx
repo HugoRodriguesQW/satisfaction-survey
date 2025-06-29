@@ -7,11 +7,10 @@ import { HeaderFile } from "./header/file.module";
 type HeaderProps = {
   showAccount?: boolean;
   showFile?: boolean;
-  showSync?: boolean;
   fixed?: boolean;
 };
 
-export function Header({ showAccount = true, showFile = false, showSync = false, fixed }: HeaderProps) {
+export function Header({ showAccount = true, showFile = false, fixed }: HeaderProps) {
   function handlePushHome() {
     window.location.assign(window.location.origin);
   }

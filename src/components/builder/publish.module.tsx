@@ -23,7 +23,7 @@ export function BuilderPublish({ isOpen, handleClose }: BuilderPublishProps) {
 
     const key = id && keys ? keys[id]?.survey : "n";
 
-    const [status, setStatus] = useState<STATUSValue>(STATUS.disabled)
+    const [status] = useState<STATUSValue>(STATUS.disabled)
 
     const [startTime, setStartTime] = useState<Date | undefined>(new Date());
     const [endTime, setEndTime] = useState<Date | undefined>()

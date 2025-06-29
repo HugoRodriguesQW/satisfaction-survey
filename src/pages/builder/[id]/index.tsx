@@ -27,7 +27,7 @@ export default function Builder(props: BuilderProps) {
                 <DragTest.Context>
                     <MovableSection.Context>
                         <PageContainer noOverflow>
-                            <Header fixed showFile showSync />
+                            <Header fixed showFile />
                             <div className="w-full h-full overflow-clip bg-background">
                                 <EditorSyncStatus />
 

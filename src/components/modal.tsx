@@ -50,7 +50,7 @@ export function createModal<T extends string>(...containers: T[]) {
                     isOpen && (
                         <Dialog onClose={handleClose} open={true} className="relative z-50">
                             <div className={twMerge(
-                                "fixed inset-0 flex w-screen items-center  justify-center p-4 backdrop-grayscale-70 backdrop-contrast-[109%] backdrop-blur-xs",
+                                "fixed inset-0 flex w-screen items-center  justify-center p-3 backdrop-grayscale-70 backdrop-contrast-[109%] backdrop-blur-xs",
                                 anchor === "left" && "justify-start",
                                 anchor === "right" && "justify-end",
                                 anchor === "top" && "items-start",

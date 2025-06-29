@@ -62,7 +62,7 @@ export function TimePicker({ value, onChange }: DataPickerProps) {
             <TimePickerCol value={currentHour} range={hourRange} onChange={setCurrentHour} />
             <TimePickerSeparator />
             <TimePickerCol value={currentMinute} range={minuteRange} onChange={setCurrentMinute} />
-            <TimePickerSeparator />
+            {currentIndicator && <TimePickerSeparator />}
             {currentIndicator && <TimePickerCol value={currentIndicator} range={indicatorRange} onChange={setCurrentIndicator} />}
         </div>
     )
