@@ -15,16 +15,14 @@ type ModalProps = {
     rootClassName?: HTMLAttributes<HTMLDivElement>["className"]
 }
 
-type modalContextProps = {
+type modalContextProps<T extends string> = {
     isOpen: boolean,
-    currentContainer?: string,
-    switchTo: (id: string) => void,
+    currentContainer?: T,
+    switchTo: (id: T) => void,
     handleClose: () => void;
 }
 
-const modalContext = createContext({} as modalContextProps)
-
-
+const modalContext = createContext({} as modalContextProps<any>)
 
 export function createModal<T extends string>(...containers: T[]) {
 
@@ -32,7 +30,7 @@ export function createModal<T extends string>(...containers: T[]) {
     function Modal<T extends string>({ anchor = "center", isOpen, handleClose, ...props }: ModalProps) {
         const [currentContainer, setCurrentContainer] = useState<T>();
 
-        const switchTo: modalContextProps["switchTo"] = (id) => {
+        const switchTo: modalContextProps<T>["switchTo"] = (id) => {
             if (containers.includes(id as any)) {
 
                 setCurrentContainer(id as T)
@@ -41,7 +39,6 @@ export function createModal<T extends string>(...containers: T[]) {
             }
 
         }
-
 
         return (
             <modalContext.Provider value={{ isOpen, currentContainer, switchTo, handleClose }}>
@@ -77,6 +74,13 @@ export function createModal<T extends string>(...containers: T[]) {
         )
     }
 
+    Modal.Containers = containers;
+
+    Modal.useContext = () => {
+        const ctx = useContext(modalContext)
+        return (ctx as any) as modalContextProps<T>
+    }
+
 
     type ModalContainerProps = {
         container: T,
@@ -104,21 +108,6 @@ export function createModal<T extends string>(...containers: T[]) {
         )
     }
 
-    type ModalSwitchProps = { to: T, children: React.FunctionComponent<{ caller: () => void }> }
-
-    Modal.Switch = function ModalSwitch({ to, children }: ModalSwitchProps) {
-        const { switchTo } = useContext(modalContext);
-
-        function caller() {
-            switchTo(to);
-        }
-
-        if (typeof children === "function") {
-            return children({ caller });
-        }
-
-        return null;
-    }
 
     type ModalHeaderProps = React.HTMLAttributes<HTMLDivElement> & { container?: T, backTo?: T, disableBack?: boolean, disableClose?: boolean }
 
@@ -142,7 +131,7 @@ export function createModal<T extends string>(...containers: T[]) {
             <div className={twMerge("flex justify-between items-center border-b py-2 px-2", className)}>
                 <div className={"flex gap-2 items-center"} {...rest}>
                     {backTo && (
-                        <button className="p-[0.1rem] rounded-md not-hover:opacity-70  hover:bg-foreground/10 z-50" onClick={handleBack}>
+                        <button className="p-[0.2rem] px-[0.5rem] rounded-md not-hover:opacity-70 bg-foreground/10  hover:bg-foreground/15 z-50" onClick={handleBack}>
                             <RiArrowLeftSLine className="w-7 h-7" />
                         </button>
                     )}
@@ -164,11 +153,9 @@ export function createModal<T extends string>(...containers: T[]) {
         )
     }
 
+    type ModalCallerProps = React.HTMLAttributes<HTMLButtonElement> & { name?: string, container: T, disabled?: boolean }
 
-
-    type ModalCallerProps = React.HTMLAttributes<HTMLButtonElement> & { name?: string, container: T }
-
-    Modal.Caller = function ModalCaller({ className, children, name, title, onClick, container, ...rest }: ModalCallerProps) {
+    Modal.Caller = function ModalCaller({ className, children, name, title, onClick, container, disabled, ...rest }: ModalCallerProps) {
 
         const ctx = useContext(modalContext)
 
@@ -179,10 +166,10 @@ export function createModal<T extends string>(...containers: T[]) {
 
 
         return (<button name={name} title={title} className={twMerge(
-            "relative mb-3 mt-1 bg-gradient-to-r  hover:from-foreground/15 hover:to-foreground/10 transition",
+            "relative mb-3 mt-1 bg-gradient-to-r  not-disabled:hover:from-foreground/15 not-disabled:hover:to-foreground/10 transition",
             "max-sm:border-y  w-full max-sm:max-w-[95%] max-sm:mx-auto max-sm:rounded-md  border-foreground/15"
-        )} onClick={handleCall} {...rest}>
-            <RiArrowRightSLine className="w-6 h-6 opacity-50 absolute right-2 top-1/2 -mt-3 " />
+        )} onClick={handleCall} disabled={disabled} {...rest}>
+            {!disabled && <RiArrowRightSLine className="w-6 h-6 opacity-50 absolute right-2 top-1/2 -mt-3" />}
             <div className={twMerge("w-full", className)}>
                 {children}
             </div>

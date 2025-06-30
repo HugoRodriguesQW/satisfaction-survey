@@ -13,7 +13,7 @@ type DateSelectorProps = {
 
 export function DateIndicator(props: DateSelectorProps) {
 
-
+    
     if (!props.date) {
         return (
             <Content className={twMerge(props.active && "")}>

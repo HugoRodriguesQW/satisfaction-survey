@@ -37,8 +37,16 @@ export function WorkspaceContextProvider({ children }: ProviderProps) {
         try {
             setCurrentBucket(bucket);
             const { nextExists, surveys: surveyBucket } = await apiGet<SearchBucket>(`/api/survey/bucket/${bucket}/search`, "json")
-
             setNextExists(nextExists)
+
+
+            surveyBucket.map((s) => {
+                if (!s.schedule) s.schedule = { active: false }
+                if (s.schedule?.start) s.schedule.start = new Date(s.schedule.start)
+                if (s.schedule?.end) s.schedule.end = new Date(s.schedule.end)
+                if (s.created_at) s.created_at = new Date(s.created_at)
+            })
+
             setSurveys([...surveys, ...surveyBucket].filter((s, index, list) => {
                 return list.findIndex((li) => li.id === s.id) === index;
             }))

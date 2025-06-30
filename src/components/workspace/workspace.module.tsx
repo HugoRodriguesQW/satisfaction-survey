@@ -11,6 +11,7 @@ import { SurveyCard } from "./card.module";
 import { DynamicBox } from "../DynamicBox";
 import Head from "next/head";
 import { workspaceContext, WorkspaceContextProvider } from "@/context/workspaceContext.module";
+import { getSurveyStatus } from "@/resources/survey";
 
 export default function Workspace() {
   const { data, fetching } = useContext(dataContext);
@@ -94,7 +95,7 @@ function SurveyCards() {
             data={{
               answers: 0,
               questions: survey.questionsCount,
-              status: survey.status,
+              status: getSurveyStatus(survey.schedule),
               takers: 100,
               feedbacks: 0,
               title: survey.name ?? "Untitled Survey",
@@ -106,7 +107,7 @@ function SurveyCards() {
           new Array(8).fill(0).map((_, i) => (
             <Skeleton condition={!conditions.showLoading} key={"fake-workspace-skel-" + i} >
               <Skeleton.Skel className="w-full h-full rounded-md bg-foreground/5 min-h-[200px]" />
-              <Skeleton.Content className="w-full h-full rounded-md bg-foreground/10 min-h-[200px]"  />
+              <Skeleton.Content className="w-full h-full rounded-md bg-foreground/10 min-h-[200px]" />
             </Skeleton>
           ))
         )}

@@ -9,7 +9,8 @@ import { Sync } from "@/resources/definitions/sync";
 type BuilderData = {
     id?: string,
     name: string,
-    questions: Array<Question>
+    questions: Array<Question>,
+    schedule: Survey["schedule"]
 }
 
 type BuilderContextProps = BuilderData & {
@@ -22,6 +23,7 @@ type BuilderContextProps = BuilderData & {
     removeQuestion: (index: number) => void
     updateQuestion: <T extends Question>(index: number, updater: <S extends QuestionProperties>(question: S) => T) => void
     updateFilename: (name: string) => void
+    updateSchedule: (schedule: Survey["schedule"]) => Promise<void>
 }
 
 export const builderContext = createContext({} as BuilderContextProps)
@@ -39,6 +41,7 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
     const [syncStatus, setSyncStatus] = useState<BuilderContextProps["syncStatus"]>(Sync.Syncing);
 
     const [name, setFilename] = useState<BuilderContextProps["name"]>("Untitled Survey")
+    const [schedule, setSchedule] = useState<BuilderContextProps["schedule"]>({ active: false })
     const [questions, setQuestions] = useState<BuilderContextProps["questions"]>([])
     const [current, setCurrent] = useState<BuilderContextProps["current"]>(-1)
     const { data, fetching } = useContext(dataContext)
@@ -78,12 +81,35 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
         setFilename(newFilename)
     }
 
+    const updateSchedule: BuilderContextProps["updateSchedule"] = (schedule) => {
+        const request = handleUpdateStack(schedule, "schedule");
+
+        request.then(() => {
+            setSchedule(schedule);
+        })
+
+        return request
+    }
+
+
     const importBuilderData = async (id: string, surveyKey: string) => {
         const survey = await apiPost<Survey>(`/api/survey/${id}/read`, { surveyKey }, "json");
 
+        console.info({ importedData: survey })
+
         if (survey) {
+            // Parse json date to Date
+            if (survey.created_at) survey.created_at = new Date(survey.created_at)
+            if (survey.schedule?.start) survey.schedule.start = new Date(survey.schedule.start)
+            if (survey.schedule?.end) survey.schedule.end = new Date(survey.schedule.end)
+            if (!survey.schedule) {
+                survey.schedule = {
+                    active: false
+                }
+            }
             updateFilename(survey.name ?? "");
             setQuestions(survey.questions);
+            setSchedule(survey.schedule);
             setSurvetFetched(true);
         }
     }
@@ -138,7 +164,6 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
             updateStack.off("call", handleUpdateCall)
             updateStack.off("fail", handleUpdateError)
             updateStack.off("success", handleUpdateSuccess)
-
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,12 +184,14 @@ export function BuilderContextProvider({ children, id }: BuilderProviderProps) {
             questions,
             current,
             syncStatus,
+            schedule,
             forceSync,
             updateCurrent,
             addQuestion,
             removeQuestion,
             updateQuestion,
-            updateFilename
+            updateFilename,
+            updateSchedule,
         }}>
             {children}
         </builderContext.Provider>

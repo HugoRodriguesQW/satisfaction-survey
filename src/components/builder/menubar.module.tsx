@@ -10,7 +10,7 @@ import { BuilderPublish } from "./publish.module";
 
 export function EditorMenuBar() {
 
-    const { syncStatus } = useContext(builderContext);
+    const { syncStatus, schedule } = useContext(builderContext);
     const [isOpen, setIsOpen] = useState(false);
     const [hoveringButton, setHoveringButton] = useState(false);
     const [showText, setShowText] = useState(false);
@@ -72,12 +72,15 @@ export function EditorMenuBar() {
 
                 <button className={
                     twMerge(
-                        "bg-gradient-to-br opacity-90 from-neon-mid  via-neon-mid to-80% to-neon-violet flex gap-1 items-center font-bold px-3 rounded-sm hover:opacity-85 disabled:from-foreground/50 disabled:to-foreground/50 disabled:via-foreground/50 transition-colors duration-100",
+                        "bg-gradient-to-br from-neon  via-neon-mid to-80% to-neon-violet-sub flex gap-1 items-center font-bold px-3 rounded-sm hover:contrast-150 disabled:from-foreground/50 disabled:to-foreground/50 disabled:via-foreground/50 transition-colors duration-100",
+                        schedule.active && "from-green-500 via-green-500/85 to-green-500/80"
                     )
                 }
                     name='publish survey'
                     onClick={handleOpenPublish} disabled={syncStatus !== Sync.Ok}>
-                    <IoShareSocial className="w-5 h-5" />  <span>Publish</span>
+                    <IoShareSocial className="w-5 h-5" />  <span>{
+                        schedule.active ? "Published" : "Publish"
+                    }</span>
                 </button>
             </div>
 

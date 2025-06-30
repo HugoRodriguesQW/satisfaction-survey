@@ -6,6 +6,7 @@ import { sessionContext } from "./sessionContext.module";
 type dataContextProps = {
   data?: SafeData;
   fetching: boolean;
+  revokeSurveyKey: (surveyId: string) => Promise<void>
 };
 
 export const dataContext = createContext({} as dataContextProps);
@@ -31,6 +32,14 @@ export function DataContextProvider({ children }: ProviderProps) {
     }
   }
 
+  async function revokeSurveyKey(surveyId: string) {
+    if (!data) throw new Error("Data must be fetched before");
+    const newSurveyKey = await apiGet<string>(`/api/survey/${surveyId}/revoke`, "text")
+    if (!newSurveyKey) throw new Error("Couldn't update the stack")
+    data.private.keys[surveyId].survey = newSurveyKey;
+    setData({ ...data })
+  }
+
   useEffect(() => {
     getData()
       .then(setData)
@@ -46,6 +55,7 @@ export function DataContextProvider({ children }: ProviderProps) {
       value={{
         data,
         fetching,
+        revokeSurveyKey
       }}
     >
       {children}

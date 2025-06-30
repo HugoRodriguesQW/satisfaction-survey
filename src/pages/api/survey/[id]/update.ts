@@ -1,5 +1,6 @@
-import { Question, STATUS, STATUSValue } from "@/resources/definitions";
+import { Question } from "@/resources/definitions";
 import { authMiddleware } from "@/resources/server/auth";
+import { SurveySchema } from "@/resources/server/database.d";
 import { readSurveyData, SafeSurvey, searchSurveyById, UpdatableKeys, updatebleKeys, updateSurveyData } from "@/resources/server/surveys";
 import { readUserData } from "@/resources/server/user";
 import { it } from "@/resources/utils";
@@ -37,8 +38,8 @@ const handler = authMiddleware(async (req, res) => {
                 case "questions":
                     data.questions = value as Question[];
                     break;
-                case "status":
-                    data.status = value as STATUSValue;
+                case "schedule":
+                    data.schedule = value as SurveySchema["data"]["schedule"];
                     break;
                 default:
                     console.error("Invalid Property:", property)
@@ -68,8 +69,12 @@ function validateInput(id: unknown, property: unknown, value: unknown) {
             return it(value).is(String());
         case "questions":
             return it(value).is(Object());
-        case "status":
-            return it(value).eq(STATUS.active, STATUS.disabled, STATUS.ended, STATUS.scheduled)
+        case "schedule":
+            return it(value).is(Object()) && it(value).custom((value) => (
+                (it(new Date(value?.start).getTime()).moreThan(0) || value?.start === undefined) &&
+                (it(new Date(value?.end).getTime()).moreThan(0) || value?.end === undefined) &&
+                it(value?.active).is(Boolean())
+            ))
         default:
             return false;
 

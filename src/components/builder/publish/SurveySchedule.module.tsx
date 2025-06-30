@@ -5,16 +5,18 @@ import { PublishModal } from "../publish.module";
 import { Separator } from "@/components/separator.module";
 import { DataPicker } from "./DataPicker.module";
 import { TimePicker } from "./TimePicker.module";
+import { twMerge } from "tailwind-merge";
 
 type SurveyScheduleProps = {
     start?: Date,
     end?: Date,
     disabled?: boolean
+    locked?: boolean
     onClick?: () => void
 }
 
 
-export function SurveySchedule({ start, end, disabled, onClick }: SurveyScheduleProps) {
+export function SurveySchedule({ start, end, disabled, locked, onClick }: SurveyScheduleProps) {
 
     return (
         <PublishSection onClick={onClick}>
@@ -27,9 +29,10 @@ export function SurveySchedule({ start, end, disabled, onClick }: SurveySchedule
 
                 <PublishModal.Caller
                     container="start-date"
-                    className="flex flex-col items-start px-5"
-                    title="change the start time"
+                    className={twMerge("flex flex-col items-start px-5", locked && "cursor-not-allowed hover:[&>.locked-message]:opacity-100")}
+                    title={locked ? undefined : "change the start time"}
                     name="change the start time"
+                    disabled={disabled}
                 >
 
                     <div className="font-bold text-foreground/60 text-xs px-1 pt-2">Start at</div>
@@ -41,24 +44,37 @@ export function SurveySchedule({ start, end, disabled, onClick }: SurveySchedule
 
                     />
 
+                    <div className="text-amber-500/75 text-sm px-5 -mt-2 italic locked-message opacity-0 transition duration-100 delay-700">
+                        Unpublish the survey to make scheduling changes.
+                    </div>
+
+
                 </PublishModal.Caller>
 
 
 
                 <PublishModal.Caller
                     container="end-date"
-                    className="flex flex-col items-start px-5"
-                    title="change the end time"
+                    className={twMerge("flex flex-col items-start px-5", locked && "cursor-not-allowed hover:[&>.locked-message]:opacity-100")}
+                    title={locked ? undefined : "change the end time"}
                     name="change the end time"
+                    disabled={disabled}
                 >
                     <div className="font-bold text-foreground/60 text-xs px-1 pt-2">End at</div>
+
                     <DateIndicator
                         date={end}
                         disabled={disabled}
                         relative={endRelativeTime(end, start)}
                     />
+
+                    <div className="text-amber-500/75 text-sm px-5 -mt-2 italic locked-message opacity-0 transition duration-100 delay-700">
+                        Unpublish the survey to make scheduling changes.
+                    </div>
+
                 </PublishModal.Caller>
             </div>
+
 
         </PublishSection>
     )
@@ -73,6 +89,8 @@ type ScheduleDateContainerProps = {
 }
 
 export function ScheduleDateContainer({ variant, end, start, onChange }: ScheduleDateContainerProps) {
+
+    const { switchTo } = PublishModal.useContext()
 
     return (
         <PublishModal.Container container={variant === "start" ? "start-date" : "end-date"}>
@@ -89,19 +107,17 @@ export function ScheduleDateContainer({ variant, end, start, onChange }: Schedul
                     {variant === "start" && <DateIndicator date={start} relative={startRelativeTime(start)} />}
                     {variant === "end" && <DateIndicator date={end} relative={endRelativeTime(end, start)} />}
 
-                    <PublishModal.Switch to={variant === "start" ? "start-time" : "end-time"}>
-                        {({ caller }) => {
-                            return (
-                                <button onClick={caller} className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
-                                    Change time
-                                </button>
-                            )
-                        }}
-                    </PublishModal.Switch>
 
+                    <button
+                        onClick={() => {
+                            switchTo(variant === "start" ? "start-time" : "end-time")
+                        }}
+                        className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
+                        Change time
+                    </button>
                 </div>
             </PublishComponent>
-        </PublishModal.Container>
+        </PublishModal.Container >
     )
 }
 
@@ -118,6 +134,8 @@ type ScheduleTimeContainer = {
 
 export function ScheduleTimeContainer({ variant, end, start, onChange }: ScheduleTimeContainer) {
 
+    const { switchTo } = PublishModal.useContext()
+
     return (
         <PublishModal.Container container={variant === "start" ? "start-time" : "end-time"}>
             <PublishModal.Header backTo="main" className="px-3" >
@@ -133,16 +151,14 @@ export function ScheduleTimeContainer({ variant, end, start, onChange }: Schedul
                     {variant === "start" && <DateIndicator date={start} relative={startRelativeTime(start)} />}
                     {variant === "end" && <DateIndicator date={end} relative={endRelativeTime(end, start)} />}
 
-                    <PublishModal.Switch to={variant === "start" ? "start-date" : "end-date"}>
-                        {({ caller }) => {
-                            return (
-                                <button onClick={caller} className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
-                                    Change date
-                                </button>
-                            )
-                        }}
-                    </PublishModal.Switch>
 
+                    <button
+                        onClick={() => {
+                            switchTo(variant === "start" ? "start-date" : "end-date")
+                        }}
+                        className="outline outline-foreground/10 bg-foreground/5 hover:bg-foreground/15 gap-2 font-bold flex justify-center px-3 py-2 mt-1 rounded-md w-full">
+                        Change date
+                    </button>
                 </div>
             </PublishComponent>
         </PublishModal.Container>

@@ -1,5 +1,5 @@
 import { WithId } from "mongodb";
-import { Question, STATUS, STATUSValue } from "../definitions";
+import { Question } from "../definitions";
 import { SafeObject } from "../utils";
 import { decrypt, encrypt, Hash, randomBytes } from "./crypto";
 import { generatePair } from "./crypto.asymetric";
@@ -10,15 +10,18 @@ import { HextToObj, ObjToHex } from "./utils";
 export type Survey = {
     name?: string,
     created_at: Date;
-    status: STATUSValue;
+    schedule: {
+        start?: Date,
+        end?: Date,
+        active: boolean,
+    }
     questions: Question[];
 }
 
 export type MinimalSurvey = Omit<Survey, "questions"> & { questionsCount: number, id: string }
 export type SurveyProperties = keyof Survey
-export const updatebleKeys = (["name", "questions", "status"] as SurveyProperties[]);
+export const updatebleKeys = (["name", "questions", "schedule"] as const);
 export type UpdatableKeys = typeof updatebleKeys[number];
-
 
 export async function searchSurveyById(client: Client, id: string) {
     const survey = await client.survey.findOne({ _id: HextToObj(id) })
@@ -79,6 +82,48 @@ export async function updateSurveyData(client: Client, survey: WithId<EncryptedS
     return false;
 }
 
+
+export async function refreshSurveyKey(client: Client, survey: WithId<EncryptedSurveySchema>, user: UserSchema, access: AuthSchema) {
+    const surveyKey = user.private.keys[ObjToHex(survey._id)]?.survey;
+    if (!surveyKey) {
+        throw new Error("Missing surveyKey")
+    };
+
+    const decrypted = decrypt(survey.data, new Hash(surveyKey).withSecret());
+
+    if (!decrypted) {
+        return false;
+    }
+
+    const newSurveyKey = randomBytes(32);
+    user.private.keys[ObjToHex(survey._id)].survey = newSurveyKey;
+
+    const encrypted = encrypt(decrypted, new Hash(newSurveyKey).withSecret());
+
+    await client.session(async (session) => {
+        const update = await client.survey.updateOne({ _id: survey._id }, {
+            $set: {
+                data: encrypted
+            }
+        }, { session })
+
+        if (!update.acknowledged || !update.modifiedCount) {
+            throw new Error("failed: update survey data");
+        }
+
+        const userUpdate = await updateUserPrivate(client, access, {
+            ...user.private,
+            keys: user.private.keys
+        }, session)
+
+        if (!userUpdate) {
+            throw new Error("failed: update user survey key");
+        }
+    })
+
+    return newSurveyKey;
+}
+
 export function createNewSurvey(client: Client, user: UserSchema, access: AuthSchema) {
     return new Promise<string | false>((next) => {
         const pair = generatePair();
@@ -90,7 +135,9 @@ export function createNewSurvey(client: Client, user: UserSchema, access: AuthSc
                 data: {
                     public_key: pair.public,
                     questions: [],
-                    status: STATUS.disabled,
+                    schedule: {
+                        active: false,
+                    }
                 },
                 created_at: new Date(),
             }
@@ -128,12 +175,12 @@ export function SafeSurvey(survey: SurveySchema): Survey {
     return SafeObject({
         ...survey,
         name: survey.data.name,
-        status: survey.data.status,
+        schedule: survey.data.schedule,
         questions: survey.data.questions
     }, {
         created_at: 1,
         name: 1,
         questions: 1,
-        status: 1
+        schedule: 1
     })
 }

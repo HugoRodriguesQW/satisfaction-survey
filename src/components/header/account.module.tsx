@@ -52,7 +52,9 @@ export function Account() {
 
   const hover = useHover(context, {
     mouseOnly: true,
+    delay: open ? 0 : 1000,
     handleClose: safePolygon(),
+    restMs: 0
   });
 
   const dismiss = useDismiss(context, {
@@ -88,7 +90,8 @@ export function Account() {
             "flex items-center gap-2 p-2 rounded-md cursor-pointer",
             " from-foreground/10 to-foreground/20 via-foreground/10",
             "transition-colors duration-150",
-            open && "rounded-b-none bg-gradient-to-tr"
+            open && "rounded-b-none bg-gradient-to-tr",
+            !open && "hover:bg-foreground/5"
           )}
           ref={refs.setReference}
           {...getReferenceProps()}

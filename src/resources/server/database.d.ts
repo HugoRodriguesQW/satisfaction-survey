@@ -1,5 +1,5 @@
 import { ClientSession, Collection, ObjectId, WithoutId } from "mongodb";
-import { Question, STATUSValue } from "../definitions";
+import { Question } from "../definitions";
 
 export type TaskName = "register_email_check" | "login_validation" | "recovery_email_check"
 
@@ -56,10 +56,14 @@ export type DataSchema = {
 export type SurveySchema = {
   data: {
     name?: string;
-    status: STATUSValue;
     questions: Question[];
     public_key: string;
-  }
+    schedule: {
+      start?: Date,
+      end?: Date,
+      active: boolean
+    }
+  },
   created_at: Date;
 };
 

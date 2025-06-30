@@ -55,7 +55,7 @@ const handler = authMiddleware(async (req, res) => {
         return {
             id: ObjToHex(survey._id),
             name: data.name,
-            status: data.status,
+            schedule: data.schedule,
             created_at: survey.created_at,
             questionsCount: data.questions.length,
         } as MinimalSurvey

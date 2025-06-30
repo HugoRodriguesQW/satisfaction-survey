@@ -58,7 +58,7 @@ export function TimePicker({ value, onChange }: DataPickerProps) {
     }
 
     return (
-        <div className="flex items-center w-full justify-center gap-6">
+        <div className="flex items-center w-full justify-center">
             <TimePickerCol value={currentHour} range={hourRange} onChange={setCurrentHour} />
             <TimePickerSeparator />
             <TimePickerCol value={currentMinute} range={minuteRange} onChange={setCurrentMinute} />
@@ -148,7 +148,7 @@ function TimePickerUnit({ value, primary, onClick }: TimePickerUnitProps) {
         <button
             onClick={onClick}
             className={twMerge(
-                "text-2xl px-5 py-2 font-bold transition-opacity",
+                "text-2xl px-9 py-2 font-bold transition-opacity",
                 !primary && "text-foreground/60 font-normal"
             )}>
             {typeof value === "number" ? String(value).padStart(2, "0") : value}
