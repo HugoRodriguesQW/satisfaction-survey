@@ -182,6 +182,11 @@
     mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 70%, transparent 98%);
   }
 
+  .apply-response-mask {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 70%, transparent 98%);
+    mask-image: linear-gradient(to bottom, transparent 2%, black 30%, black 70%, transparent 98%);
+  }
+
   .turn-off-animate,
   .turn-on-animate {
     @apply relative object-cover overflow-hidden;
@@ -219,6 +224,10 @@
   .animate-refresh {
     animation: 1.3s animate-refresh forwards ease-in-out;
     animation-delay: 600ms;
+  }
+
+  .animate-scheduled-calendar {
+    animation: 5s animate-scheduled-calendar forwards infinite alternate-reverse ease-in-out;
   }
 }
 
@@ -262,12 +271,8 @@ input[type="number"] {
   appearance: textfield;
 }
 
-button {
-  cursor: pointer;
-}
 
 button:disabled {
-  cursor: inherit;
   opacity: 0.8;
 }
 
@@ -393,7 +398,8 @@ input:-webkit-autofill:active {
 }
 
 @keyframes animate-refresh {
-  0%, 10% {
+  0%,
+  10% {
     transform: rotateZ(0deg);
     filter: grayscale(0);
   }
@@ -404,8 +410,25 @@ input:-webkit-autofill:active {
     filter: grayscale(1);
   }
 
-  90%, 100% {
+  90%,
+  100% {
     transform: rotateZ(360deg);
     filter: grayscale(0);
+  }
+}
+
+@keyframes animate-scheduled-calendar {
+  0% {
+    transform: rotate(-5deg) translateY(7%);
+    filter: opacity(0.9);
+  }
+
+  20%, 80% {
+    filter: opacity(1);
+  }
+
+  100% {
+    transform: rotate(-4deg) translateY(-7%);
+    filter: opacity(0.9);
   }
 }

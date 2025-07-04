@@ -10,7 +10,8 @@ import { STATUS } from "@/resources/definitions";
 import { it } from "@/resources/utils";
 import { PublishModal } from "../publish.module";
 import { MdErrorOutline } from "react-icons/md";
-import { createShareableLink, shareOrCopyLink } from "@/resources/client/survey";
+import { createShareableLink } from "@/resources/client/survey";
+import { useNavigator } from "@/resources/client/navigator";
 
 type PublishMainContainerProps = {
     startTime?: Date,
@@ -24,6 +25,9 @@ export function PublishMainContainer({ startTime, endTime, startChange, endChang
     const { id, name, schedule, updateSchedule } = useContext(builderContext);
     const { data, revokeSurveyKey } = useContext(dataContext);
     const { switchTo } = PublishModal.useContext();
+    const { canShare, shareOrCopyLink } = useNavigator()
+
+    console.info(canShare)
 
     const [fetching, setFetching] = useState(false);
     const [onError, setOnError] = useState(false);
@@ -155,7 +159,7 @@ export function PublishMainContainer({ startTime, endTime, startChange, endChang
                                     <input className={twMerge(
                                         "focus:outline-0  border border-foreground/15 w-full  overflow-clip bg-foreground/5 rounded-md py-[0.1rem] text-lg px-3 text-foreground/60",
                                         linkCopied && "outline outline-neon-mid bg-neon-mid/15"
-                                        )} value={surveyLink}>
+                                    )} value={surveyLink}>
                                     </input>
                                     <button
                                         className={
@@ -167,13 +171,13 @@ export function PublishMainContainer({ startTime, endTime, startChange, endChang
                                         onClick={handleShare}
                                         onBlur={() => setLinkCopied(false)}
                                         onMouseLeave={() => {
-                                            setTimeout(()=> {
+                                            setTimeout(() => {
                                                 setLinkCopied(false)
                                             }, 600)
                                         }}
                                     >
                                         <IoShareSocial className="w-5 h-5" />
-                                        <div>{linkCopied ? "Copied" : "Share"}</div>
+                                        <div>{linkCopied ? "Copied" : (canShare() ? "Share" : "Copy")}</div>
                                     </button>
                                 </div>
                                 <button

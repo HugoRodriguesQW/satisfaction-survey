@@ -1,12 +1,13 @@
 import React, { useState } from "react"
 import { PublishModal } from "../publish.module"
 import { PublishComponent } from "./Common.module"
-import { createShareableLink, shareOrCopyLink } from "@/resources/client/survey"
+import { createShareableLink } from "@/resources/client/survey"
 import type { SafeData } from "@/resources/server/user"
 import { IoShareSocial } from "react-icons/io5"
 import { TbShare } from "react-icons/tb"
 import { FaLink } from "react-icons/fa"
 import { twMerge } from "tailwind-merge"
+import { useNavigator } from "@/resources/client/navigator"
 
 type FeedbackContainerProps = {
     container: typeof PublishModal.Containers[number],
@@ -38,6 +39,8 @@ export function PublishFeedbackContainer({ id, data, name }: PublishFeedbackCont
 
     const link = createShareableLink(id, data);
     const [copied, setCopied] = useState(false);
+    const { canShare, shareOrCopyLink } = useNavigator();
+
 
     function handleShare() {
         const shareMethod = shareOrCopyLink(link, name, data?.private.name)
@@ -81,7 +84,7 @@ export function PublishFeedbackContainer({ id, data, name }: PublishFeedbackCont
                         onBlur={() => setCopied(false)}>
                         <IoShareSocial className="w-5 h-5 -mt-0.5" />
                         {copied && <div>Copied to clipboard</div>}
-                        {!copied && <div>Share the link</div>}
+                        {!copied && <div>{canShare() ? "Share" : "Copy"} the link</div>}
                     </button>
                 </div>
             </div>
@@ -138,6 +141,8 @@ export function RevokeFeedbackContainer({ id, data, name }: RevokeFeedbackContai
 
     const link = createShareableLink(id, data);
     const [copied, setCopied] = useState(false);
+    const { canShare, shareOrCopyLink } = useNavigator();
+
 
     function handleShare() {
         const shareMethod = shareOrCopyLink(link, name, data?.private.name)
@@ -183,7 +188,7 @@ export function RevokeFeedbackContainer({ id, data, name }: RevokeFeedbackContai
                         onBlur={() => setCopied(false)}>
                         <IoShareSocial className="w-5 h-5 -mt-0.5" />
                         {copied && <div>Copied to clipboard</div>}
-                        {!copied && <div>Share the new link</div>}
+                        {!copied && <div>{canShare() ? "Share" : "Copy"} the new link</div>}
                     </button>
                 </div>
             </div>

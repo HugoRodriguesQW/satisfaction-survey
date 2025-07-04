@@ -2,15 +2,18 @@ import { Logo } from "./icons/logo.module";
 import { Account } from "./header/account.module";
 import { twMerge } from "tailwind-merge";
 import { HeaderFile } from "./header/file.module";
+import { ApplySurveyHeader } from "./header/apply.module";
 
 
 type HeaderProps = {
   showAccount?: boolean;
   showFile?: boolean;
   fixed?: boolean;
+  surveyName?: string,
+  showSurveyName?: boolean
 };
 
-export function Header({ showAccount = true, showFile = false, fixed }: HeaderProps) {
+export function Header({ showAccount = true, showFile = false, showSurveyName = false, surveyName, fixed }: HeaderProps) {
   function handlePushHome() {
     window.location.assign(window.location.origin);
   }
@@ -33,6 +36,13 @@ export function Header({ showAccount = true, showFile = false, fixed }: HeaderPr
         {
           showFile && <HeaderFile />
         }
+
+        {showSurveyName && (
+          <>
+            <ApplySurveyHeader name={surveyName} />
+            {!showAccount && <div className="flex-1"/>}
+          </>
+        )}
 
 
         {showAccount && <Account />}

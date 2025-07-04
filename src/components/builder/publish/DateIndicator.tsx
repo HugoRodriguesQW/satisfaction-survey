@@ -9,17 +9,18 @@ type DateSelectorProps = {
     disabled?: boolean,
     emptyText?: string
     disableTime?: boolean;
+    className?: React.HTMLAttributes<HTMLDivElement>["className"]
 }
 
 export function DateIndicator(props: DateSelectorProps) {
 
-    
+
     if (!props.date) {
         return (
-            <Content className={twMerge(props.active && "")}>
+            <Content className={twMerge(props.className)}>
                 <FaRegClock className="w-4 h-4 fill-foreground/50 mr-0.5" />
                 {props.emptyText}
-                <div className="text-green-500/80 not-first:ml-2">{props.relative}</div>
+                {props.relative && <div className="text-green-500/80 not-first:ml-2">{props.relative}</div>}
             </Content>
         )
     }
@@ -34,7 +35,7 @@ export function DateIndicator(props: DateSelectorProps) {
 
 
     return (
-        <Content className={twMerge(props.active && "", "flex-row items-center gap-1 max-sm:flex-wrap")}>
+        <Content className={twMerge(props.active && "", "flex-row items-center gap-1 max-sm:flex-wrap", props.className)}>
             <FaRegClock className="w-4 h-4 fill-foreground/50 mr-0.5" />
             <div className="flex flex-nowrap gap-0.5 justify-center mr-1.5">
                 {date.map(([t, sep], i) =>
@@ -69,7 +70,7 @@ export function DateIndicator(props: DateSelectorProps) {
                 )
             }
 
-            <div className="text-green-500/80 ml-2 max-sm:w-full">{props.relative}</div>
+            {props.relative && <div className="text-green-500/80 ml-2 max-sm:w-full">{props.relative}</div>}
         </Content >
     )
 }
