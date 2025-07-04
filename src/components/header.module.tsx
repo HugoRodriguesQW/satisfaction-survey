@@ -23,13 +23,13 @@ export function Header({ showAccount = true, showFile = false, showSurveyName = 
       {fixed && <div className="h-15" />}
       <header className={
         twMerge("w-full flex justify-between h-18 items-center border-b-foreground/5 border-b-1 px-8  backdrop-blur-md",
-          fixed && "fixed   top-0 left-0 bg-background",
+          fixed && "fixed top-0 left-0 bg-background",
           "z-[99]"
         )
       }>
 
 
-        <div className={twMerge((!showAccount && !showFile) && "mx-auto sm:mx-0 my-0")}>
+        <div className={twMerge((!showAccount && !showFile && !showSurveyName) && "mx-auto sm:mx-0 my-0", (showSurveyName && "max-[500px]:mx-auto"))}>
           <Logo className="h-8 sm:h-8 cursor-pointer" onClick={handlePushHome} />
         </div>
 
@@ -40,7 +40,7 @@ export function Header({ showAccount = true, showFile = false, showSurveyName = 
         {showSurveyName && (
           <>
             <ApplySurveyHeader name={surveyName} />
-            {!showAccount && <div className="flex-1"/>}
+            {!showAccount && <div className="flex-1 max-sm:hidden" />}
           </>
         )}
 

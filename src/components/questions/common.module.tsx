@@ -14,7 +14,7 @@ export function QuestionCommonComponent({ question, responseMode }: CommonQuesti
                     "text-xl border border-foreground/10 px-2 py-1 focus:outline-0",
                     `font-${question.typography.title.weight}`,
                     `font-${question.typography.title.fontFamily}`,
-                    responseMode && "border-0 text-3xl w-full"
+                    responseMode && "border-0 sm:text-3xl text-2xl w-full"
                 )
             } >
                 {question.section.title}
@@ -23,7 +23,7 @@ export function QuestionCommonComponent({ question, responseMode }: CommonQuesti
             <div className={twMerge("text-lg text-gray-500  border border-foreground/10 px-2 py-1 focus:outline-0 mb-5",
                 `font-${question.typography.description.weight}`,
                 `font-${question.typography.description.fontFamily}`,
-                responseMode && "border-0 text-2xl w-full"
+                responseMode && "border-0 sm:text-2xl w-full"
             )} >
                 {question.section.description}
             </div>

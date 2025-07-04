@@ -20,6 +20,7 @@ type ApplyResponseProps = {
 
 export function ApplyResponse({ survey }: ApplyResponseProps) {
 
+
     const [currentQuestion, setCurrentQuestion] = useState(-1);
     const [surveyLength] = useState(survey.questions.length)
 
@@ -46,15 +47,16 @@ export function ApplyResponse({ survey }: ApplyResponseProps) {
             </Head>
 
 
-            <div className="pb-10  w-full h-full">
-                <div className="w-full h-full relative flex items-center overflow-hidden">
+            <div className="lg:pb-10  w-full h-full flex items-center overflow-hidden">
+                <div className="w-full h-full max-w-[1024px] max-h-[710px] mx-auto relative flex items-center  overflow-visible">
                     {/* Previous Card */}
                     <div className={twMerge(
-                        "absolute left-[50%] -ml-[25%] max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full  h-[70%] transition-all duration-400 backdrop-blur-3xl",
-                        view.c1.pos === 0 && "-translate-x-[125%]  h-[70%]  opacity-60 z-20",
-                        view.c1.pos === 1 && "-translate-x-[0%]  h-[100%] z-30",
-                        view.c1.pos === 2 && "-translate-x-[-125%]  h-[70%] opacity-60 z-10",
-                        (view.c1.content < -1 || view.c1.content > surveyLength) && "hidden"
+                        "absolute x-auto  lg:[&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full h-full lg:transition-all lg:duration-400 backdrop-blur-3xl",
+                        view.c1.pos === 0 && "-left-[calc(100%+5vw)] h-[70%] opacity-60 lg:blur-xs z-20",
+                        view.c1.pos === 1 && "left-0  h h-[100%]  z-30",
+                        view.c1.pos === 2 && "left-[calc(100%+5vw)]  h-[70%] opacity-60 lg:blur-xs z-10",
+                        (view.c1.content < -1 || view.c1.content > surveyLength) && "hidden",
+                        "max-lg:rounded-none"
                     )} >
                         <ResponseCard
                             question={survey.questions[view.c1.content]}
@@ -66,11 +68,12 @@ export function ApplyResponse({ survey }: ApplyResponseProps) {
 
                     {/* Current Card */}
                     <div className={twMerge(
-                        "absolute left-[50%] -ml-[25%] max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden  bg-foreground/5 rounded-[3rem] flex flex-col justify-center items-center  w-full translate-x-[0%] h-full transition-all duration-400  backdrop-blur-3xl",
-                        view.c2.pos === 0 && "-translate-x-[125%] h-[70%]  opacity-60  z-20",
-                        view.c2.pos === 1 && "-translate-x-[0%] h-[100%]  z-30",
-                        view.c2.pos === 2 && "-translate-x-[-125%] h-[70%] opacity-60  z-10",
-                        (view.c2.content < -1 || view.c2.content > surveyLength) && "hidden"
+                        "absolute  x-auto lg:[&>*]:first:max-w-[80%] object-cover overflow-hidden  bg-foreground/5 rounded-[3rem] flex flex-col justify-center items-center  w-full h-full lg:transition-all lg:duration-400  backdrop-blur-3xl",
+                        view.c2.pos === 0 && "-left-[calc(100%+5vw)] h-[70%] opacity-60 lg:blur-xs z-20",
+                        view.c2.pos === 1 && "left-0  h h-[100%]  z-30",
+                        view.c2.pos === 2 && "left-[calc(100%+5vw)]  h-[70%] opacity-60 lg:blur-xs z-10",
+                        (view.c2.content < -1 || view.c2.content > surveyLength) && "hidden",
+                        "max-lg:rounded-none"
                     )}>
                         <ResponseCard
                             question={survey.questions[view.c2.content]}
@@ -83,13 +86,14 @@ export function ApplyResponse({ survey }: ApplyResponseProps) {
 
                     {/* Next Card */}
                     <div className={twMerge(
-                        "absolute left-[50%] -ml-[25%] flex-1 max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full translate-x-[125%] transition-all duration-400  backdrop-blur-3xl",
-                        view.c3.pos === 0 && "-translate-x-[125%] h-[70%]  opacity-60  z-20",
-                        view.c3.pos === 1 && "-translate-x-[0%] h-[100%]  z-30",
-                        view.c3.pos === 2 && "-translate-x-[-125%] h-[70%] opacity-60  z-10",
-                        (view.c3.content < -1 || view.c3.content > surveyLength) && "hidden"
+                        "absolute flex-1 lg:[&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full h-full lg:transition-all lg:duration-400  backdrop-blur-3xl",
+                        view.c3.pos === 0 && "-left-[calc(100%+5vw)] h-[70%] opacity-60 lg:blur-xs z-20",
+                        view.c3.pos === 1 && "left-0  h h-[100%]  z-30",
+                        view.c3.pos === 2 && "left-[calc(100%+5vw)]  h-[70%] opacity-60 lg:blur-xs z-10",
+                        (view.c3.content < -1 || view.c3.content > surveyLength) && "hidden",
+                        "max-lg:rounded-none"
                     )} >
-                        <ResponseCard 
+                        <ResponseCard
                             question={survey.questions[view.c3.content]}
                             index={view.c3.content}
                             handleBack={handleBackQuestion}
@@ -121,7 +125,7 @@ function ResponseCard({ question, index, length, handleBack, handleNext, seconda
 
     return (
         <>
-          
+
             {showStart && (<>
                 <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
 
@@ -129,11 +133,11 @@ function ResponseCard({ question, index, length, handleBack, handleNext, seconda
             </>)}
 
             {(!showEnd && !showStart && question) && (<>
-                <div className={twMerge("flex-1 flex flex-col w-full justify-center gap-6 items-center px-[8%]")}>
-                    <div className="flex text-center flex-col gap-1 items-center">
+                <div className={twMerge("flex-1 flex  flex-col justify-center-safe gap-6  w-full py-[8%] px-[4%] sm:px-[8%] overflow-y-auto show-scrollbar")}>
+                    <div className="flex  text-center flex-col gap-1 items-center">
                         <QuestionCommonComponent question={question} responseMode />
                     </div>
-                    { !secondary && CurrentSurveyForm({ question })}
+                    {!secondary && CurrentSurveyForm({ question })}
                 </div>
             </>)}
 
@@ -147,17 +151,18 @@ function ResponseCard({ question, index, length, handleBack, handleNext, seconda
             {
                 (!showEnd && !secondary) && <Progress
                     value={(showEnd ? length : index) / length}
-                    className="absolute top-0 w-full"
+                    className="order-[-1] w-full grayscale-100 bg-foreground/5"
                     hidePercentage
                 />
             }
 
-             {!secondary && <div className="flex w-full border-t border-foreground/25">
-                {!showStart && <SwitchQuestionButton direction="back" onClick={handleBack} disabled={showStart} miniButton className="rounded-bl-[3rem]" />}
+            {!secondary && <div className="flex w-full border-t border-foreground/25">
+                {!showStart && <SwitchQuestionButton direction="back" onClick={handleBack} disabled={showStart} miniButton className="lg:rounded-bl-[3rem]" />}
+                {showStart &&  <div className="flex-1"></div>}
                 <Separator orientation="vertical" />
-                {(!showEnd && !showStart) && <SwitchQuestionButton direction="next" onClick={handleNext} miniButton className="rounded-br-[3rem]" />}
-                {showStart && <SwitchQuestionButton direction="continue" miniButton onClick={handleNext} className="rounded-b-[3rem]" />}
-                {showEnd && <SwitchQuestionButton direction="submit" miniButton delay={2900} className="rounded-br-[3rem]" />}
+                {(!showEnd && !showStart) && <SwitchQuestionButton direction="next" onClick={handleNext} miniButton className="lg:rounded-br-[3rem]" />}
+                {showStart && <SwitchQuestionButton direction="continue" miniButton onClick={handleNext} className="lg:rounded-b-[3rem]" />}
+                {showEnd && <SwitchQuestionButton direction="submit" miniButton delay={2900} className="lg:rounded-br-[3rem]" />}
             </div>}
         </>
     )

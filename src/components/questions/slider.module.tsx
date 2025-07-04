@@ -11,24 +11,23 @@ export function SliderQuestionComponent({ question, responseMode }: SliderQuesti
     
     return (
         <div className={twMerge(
-            "w-full max-w-[600px] flex gap-2 items-center",
-            responseMode && "max-w-full text-xl gap-7 font-bold text-foreground/85"
+            "w-full max-w-[600px] flex gap-2 items-center  max-sm:flex-wrap",
+            responseMode && "max-w-full lg:text-xl gap-7 max-sm:gap-3  text-foreground/85"
         )}>
-            {question.input.minText}
+            <div className="max-sm:order-2 max-sm:flex-1/2">{question.input.minText}</div>
             <div className={
                 twMerge(
-                    "relative bg-foreground/10 w-full rounded-full h-3 flex items-center",
-                    responseMode && "h-5"
+                    "relative bg-foreground/10 w-full rounded-full h-3 flex items-center max-sm:order-1"
                 )
             }>
                 <div className={
                     twMerge(
-                        "absolute h-6 w-6 rounded-full bg-gradient-to-br from-neon to-neon-sub left-[50%] -ml-3 pointer",
-                        responseMode && "h-9 w-9 -ml-4.5"
+                        "absolute h-7 w-7 rounded-full bg-gradient-to-br from-neon to-neon-sub left-[50%] -ml-3 pointer",
+                        responseMode && "sm:h-9 sm:w-9 -ml-4.5"
                     )
                 } />
             </div>
-            {question.input.maxText}
+             <div className="max-sm:order-3">{question.input.maxText}</div>
         </div>
     )
 }
