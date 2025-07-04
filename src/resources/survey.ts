@@ -19,3 +19,24 @@ export function getSurveyStatus(schedule: Survey["schedule"]): STATUSValue {
 
     return STATUS.disabled;
 }
+
+export function ThreePairCards(n:number) {
+
+    const cards = [n % 3, (n + 1) % 3, (n + 2) % 3]
+    const contents = [n-1, n, n + 1];
+    
+    return {
+        c1: {
+            pos: cards.indexOf(0),
+            content: contents[cards.indexOf(0)]
+        },
+        c2: {
+            pos: cards.indexOf(1),
+            content: contents[cards.indexOf(1)]
+        },
+        c3: {
+            pos: cards.indexOf(2),
+            content: contents[cards.indexOf(2)]
+        }
+    }
+}

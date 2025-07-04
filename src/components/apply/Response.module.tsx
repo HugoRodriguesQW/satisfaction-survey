@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Head from "next/head";
 import { ApplyContainer } from "./Common.module";
 import { Survey } from "@/resources/server/surveys";
@@ -13,6 +12,7 @@ import { Progress } from "../progress.module";
 import { twMerge } from "tailwind-merge";
 import { Separator } from "../separator.module";
 import { LuSendHorizontal } from "react-icons/lu";
+import { ThreePairCards } from "@/resources/survey";
 
 type ApplyResponseProps = {
     survey: Survey
@@ -20,37 +20,24 @@ type ApplyResponseProps = {
 
 export function ApplyResponse({ survey }: ApplyResponseProps) {
 
-    const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [showEnd, setShowEnd] = useState(false);
-    const [showStart, setShowStart] = useState(true);
-
-    const question = survey.questions[currentQuestion];
-
+    const [currentQuestion, setCurrentQuestion] = useState(-1);
     const [surveyLength] = useState(survey.questions.length)
 
+    const view = ThreePairCards(currentQuestion)
+
+
     function handleNextQuestion() {
-        if (survey.questions[currentQuestion + 1]) {
-            if (showStart) return setShowStart(false)
+        if (currentQuestion <= surveyLength) {
             return setCurrentQuestion(currentQuestion + 1)
         }
-
-        if (!showEnd) setShowEnd(true);
     }
 
     function handleBackQuestion() {
-        if (survey.questions[currentQuestion - 1]) {
-            if (showEnd) return setShowEnd(false)
+        if (currentQuestion >= 0) {
             return setCurrentQuestion(currentQuestion - 1)
 
         }
-
-        if (!showStart) setShowStart(true)
     }
-
-    function handleStart() {
-        setShowStart(false);
-    }
-
 
     return (
         <ApplyContainer surveyName={survey.name ?? "Untitled Survey"}>
@@ -59,58 +46,120 @@ export function ApplyResponse({ survey }: ApplyResponseProps) {
             </Head>
 
 
-            <div className="h-full  gap-6 pb-10 w-full flex">
-
-
-                <div className="max-w-[980px] [&>*]:first:max-w-[80%] relative object-cover overflow-hidden  bg-foreground/5 rounded-[3rem] mx-auto flex flex-col justify-center items-center  w-full">
-
-                    {showStart && (<>
-                        <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
-
-                        </div>
-                    </>)}
-
-                    {(!showEnd && !showStart) && (<>
-                        <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
-                            <div className="flex text-center flex-col gap-1 items-center">
-                                <QuestionCommonComponent question={question} responseMode />
-                            </div>
-                            {CurrentSurveyForm({ question })}
-                        </div>
-                    </>)}
-
-                    {showEnd && (<>
-                        <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
-
-                        </div>
-                    </>)}
-
-
-                    {
-                        !showEnd && <Progress
-                            value={(showEnd ? surveyLength : currentQuestion) / surveyLength}
-                            className="absolute top-0 w-full"
-                            hidePercentage
-                             />
-                    }
-
-                    <div className="flex  w-full border-t border-foreground/25">
-                        {!showStart && <SwitchQuestionButton direction="back" onClick={handleBackQuestion} disabled={showStart} miniButton  className="rounded-bl-[3rem]" />}
-                        <Separator orientation="vertical" />
-                    {(!showEnd && !showStart) && <SwitchQuestionButton direction="next" onClick={handleNextQuestion} miniButton className="rounded-br-[3rem]" />}
-                        {showStart && <SwitchQuestionButton direction="continue" miniButton onClick={handleStart}  className="rounded-b-[3rem]" />}
-                        {showEnd && <SwitchQuestionButton direction="submit" miniButton delay={2900}  className="rounded-br-[3rem]" />}
+            <div className="pb-10  w-full h-full">
+                <div className="w-full h-full relative flex items-center overflow-hidden">
+                    {/* Previous Card */}
+                    <div className={twMerge(
+                        "absolute left-[50%] -ml-[25%] max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full  h-[70%] transition-all duration-400 backdrop-blur-3xl",
+                        view.c1.pos === 0 && "-translate-x-[125%]  h-[70%]  opacity-60 z-20",
+                        view.c1.pos === 1 && "-translate-x-[0%]  h-[100%] z-30",
+                        view.c1.pos === 2 && "-translate-x-[-125%]  h-[70%] opacity-60 z-10",
+                        (view.c1.content < -1 || view.c1.content > surveyLength) && "hidden"
+                    )} >
+                        <ResponseCard
+                            question={survey.questions[view.c1.content]}
+                            index={view.c1.content}
+                            handleBack={handleBackQuestion}
+                            handleNext={handleNextQuestion}
+                            length={surveyLength} secondary={view.c1.pos !== 1} />
                     </div>
 
+                    {/* Current Card */}
+                    <div className={twMerge(
+                        "absolute left-[50%] -ml-[25%] max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden  bg-foreground/5 rounded-[3rem] flex flex-col justify-center items-center  w-full translate-x-[0%] h-full transition-all duration-400  backdrop-blur-3xl",
+                        view.c2.pos === 0 && "-translate-x-[125%] h-[70%]  opacity-60  z-20",
+                        view.c2.pos === 1 && "-translate-x-[0%] h-[100%]  z-30",
+                        view.c2.pos === 2 && "-translate-x-[-125%] h-[70%] opacity-60  z-10",
+                        (view.c2.content < -1 || view.c2.content > surveyLength) && "hidden"
+                    )}>
+                        <ResponseCard
+                            question={survey.questions[view.c2.content]}
+                            index={view.c2.content}
 
+                            handleBack={handleBackQuestion}
+                            handleNext={handleNextQuestion}
+                            length={surveyLength} secondary={view.c2.pos !== 1} />
+                    </div>
 
-
+                    {/* Next Card */}
+                    <div className={twMerge(
+                        "absolute left-[50%] -ml-[25%] flex-1 max-w-[980px] [&>*]:first:max-w-[80%] object-cover overflow-hidden bg-foreground/5 rounded-[3rem]  flex flex-col justify-center items-center  w-full translate-x-[125%] transition-all duration-400  backdrop-blur-3xl",
+                        view.c3.pos === 0 && "-translate-x-[125%] h-[70%]  opacity-60  z-20",
+                        view.c3.pos === 1 && "-translate-x-[0%] h-[100%]  z-30",
+                        view.c3.pos === 2 && "-translate-x-[-125%] h-[70%] opacity-60  z-10",
+                        (view.c3.content < -1 || view.c3.content > surveyLength) && "hidden"
+                    )} >
+                        <ResponseCard 
+                            question={survey.questions[view.c3.content]}
+                            index={view.c3.content}
+                            handleBack={handleBackQuestion}
+                            handleNext={handleNextQuestion}
+                            length={surveyLength} secondary={view.c3.pos !== 1} />
+                    </div>
                 </div>
-
             </div>
 
-
         </ApplyContainer>
+    )
+}
+
+type ResponseCardProps = {
+    question: Question,
+    index: number,
+    length: number,
+    handleBack: () => void,
+    handleNext: () => void,
+    secondary?: boolean
+
+}
+
+function ResponseCard({ question, index, length, handleBack, handleNext, secondary }: ResponseCardProps) {
+
+    const showStart = index === -1;
+    const showEnd = index === length;
+
+
+    return (
+        <>
+          
+            {showStart && (<>
+                <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
+
+                </div>
+            </>)}
+
+            {(!showEnd && !showStart && question) && (<>
+                <div className={twMerge("flex-1 flex flex-col w-full justify-center gap-6 items-center px-[8%]")}>
+                    <div className="flex text-center flex-col gap-1 items-center">
+                        <QuestionCommonComponent question={question} responseMode />
+                    </div>
+                    { !secondary && CurrentSurveyForm({ question })}
+                </div>
+            </>)}
+
+            {showEnd && (<>
+                <div className="flex-1 flex flex-col w-full justify-center gap-6 items-center">
+
+                </div>
+            </>)}
+
+
+            {
+                (!showEnd && !secondary) && <Progress
+                    value={(showEnd ? length : index) / length}
+                    className="absolute top-0 w-full"
+                    hidePercentage
+                />
+            }
+
+             {!secondary && <div className="flex w-full border-t border-foreground/25">
+                {!showStart && <SwitchQuestionButton direction="back" onClick={handleBack} disabled={showStart} miniButton className="rounded-bl-[3rem]" />}
+                <Separator orientation="vertical" />
+                {(!showEnd && !showStart) && <SwitchQuestionButton direction="next" onClick={handleNext} miniButton className="rounded-br-[3rem]" />}
+                {showStart && <SwitchQuestionButton direction="continue" miniButton onClick={handleNext} className="rounded-b-[3rem]" />}
+                {showEnd && <SwitchQuestionButton direction="submit" miniButton delay={2900} className="rounded-br-[3rem]" />}
+            </div>}
+        </>
     )
 }
 
